@@ -41,6 +41,9 @@ export function AdminHeroSettings() {
       onSuccess: () => {
         toast({ title: "Başarılı", description: "Hero ayarları kaydedildi." });
         queryClient.invalidateQueries({ queryKey: getGetHeroSettingsQueryKey() });
+      },
+      onError: () => {
+        toast({ title: "Hata", description: "Hero ayarları kaydedilemedi.", variant: "destructive" });
       }
     });
   };

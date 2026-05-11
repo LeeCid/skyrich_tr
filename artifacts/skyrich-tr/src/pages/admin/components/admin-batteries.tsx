@@ -88,13 +88,29 @@ export function AdminBatteries() {
     setIsDialogOpen(true);
   };
 
+  const isValidUrl = (url: string) => {
+    if (!url) return true;
+    return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://");
+  };
+
   const handleSave = () => {
+    if (!formData.modelCode.trim() || !formData.name.trim()) {
+      toast({ title: "Hata", description: "Model kodu ve isim zorunludur.", variant: "destructive" });
+      return;
+    }
+    if (!isValidUrl(formData.imageUrl || "")) {
+      toast({ title: "Hata", description: "Görsel URL geçersiz. Sadece / veya http/https ile başlayan adresler kullanın.", variant: "destructive" });
+      return;
+    }
     if (editingBattery) {
       updateMutation.mutate({ id: editingBattery.id, data: formData }, {
         onSuccess: () => {
           toast({ title: "Başarılı", description: "Akü güncellendi." });
           queryClient.invalidateQueries({ queryKey: getListBatteriesQueryKey() });
           setIsDialogOpen(false);
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Akü güncellenemedi.", variant: "destructive" });
         }
       });
     } else {
@@ -104,6 +120,9 @@ export function AdminBatteries() {
           queryClient.invalidateQueries({ queryKey: getListBatteriesQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetAdminStatsQueryKey() });
           setIsDialogOpen(false);
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Akü oluşturulamadı.", variant: "destructive" });
         }
       });
     }
@@ -116,6 +135,9 @@ export function AdminBatteries() {
           toast({ title: "Başarılı", description: "Akü silindi." });
           queryClient.invalidateQueries({ queryKey: getListBatteriesQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetAdminStatsQueryKey() });
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Akü silinemedi.", variant: "destructive" });
         }
       });
     }

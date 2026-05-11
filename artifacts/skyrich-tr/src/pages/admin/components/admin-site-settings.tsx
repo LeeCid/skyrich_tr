@@ -46,6 +46,9 @@ export function AdminSiteSettings() {
       onSuccess: () => {
         toast({ title: "Başarılı", description: "Ayarlar kaydedildi." });
         queryClient.invalidateQueries({ queryKey: getGetSiteSettingsQueryKey() });
+      },
+      onError: () => {
+        toast({ title: "Hata", description: "Ayarlar kaydedilemedi.", variant: "destructive" });
       }
     });
   };

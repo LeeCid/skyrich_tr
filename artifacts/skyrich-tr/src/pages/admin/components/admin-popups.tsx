@@ -58,11 +58,11 @@ export function AdminPopups() {
     } else {
       setEditingPopup(null);
       setFormData({
-        title: "",
-        content: "",
+        title: "Uyumlu Aküyü Birlikte Bulalım",
+        content: "Araç marka/model veya eski akü kodunuzu gönderin, size uygun Skyrich modelini iletelim.",
         imageUrl: "",
-        buttonText: "",
-        buttonUrl: "",
+        buttonText: "WhatsApp'tan Sor",
+        buttonUrl: "https://wa.me/",
         active: true,
         frequency: 'always',
         delaySeconds: 2,
@@ -73,13 +73,33 @@ export function AdminPopups() {
     setIsDialogOpen(true);
   };
 
+  const isValidUrl = (url: string) => {
+    if (!url) return true;
+    return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://");
+  };
+
   const handleSave = () => {
+    if (!formData.title.trim()) {
+      toast({ title: "Hata", description: "Başlık zorunludur.", variant: "destructive" });
+      return;
+    }
+    if (!isValidUrl(formData.imageUrl || "")) {
+      toast({ title: "Hata", description: "Görsel URL geçersiz. Sadece / veya http/https ile başlayan adresler kullanın.", variant: "destructive" });
+      return;
+    }
+    if (!isValidUrl(formData.buttonUrl || "")) {
+      toast({ title: "Hata", description: "Buton URL geçersiz.", variant: "destructive" });
+      return;
+    }
     if (editingPopup) {
       updateMutation.mutate({ id: editingPopup.id, data: formData }, {
         onSuccess: () => {
           toast({ title: "Başarılı", description: "Popup güncellendi." });
           queryClient.invalidateQueries({ queryKey: getListPopupsQueryKey() });
           setIsDialogOpen(false);
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Popup güncellenemedi.", variant: "destructive" });
         }
       });
     } else {
@@ -89,6 +109,9 @@ export function AdminPopups() {
           queryClient.invalidateQueries({ queryKey: getListPopupsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetAdminStatsQueryKey() });
           setIsDialogOpen(false);
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Popup oluşturulamadı.", variant: "destructive" });
         }
       });
     }
@@ -101,6 +124,9 @@ export function AdminPopups() {
           toast({ title: "Başarılı", description: "Popup silindi." });
           queryClient.invalidateQueries({ queryKey: getListPopupsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetAdminStatsQueryKey() });
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Popup silinemedi.", variant: "destructive" });
         }
       });
     }

@@ -65,13 +65,29 @@ export function AdminBanners() {
     setIsDialogOpen(true);
   };
 
+  const isValidUrl = (url: string) => {
+    if (!url) return true;
+    return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://");
+  };
+
   const handleSave = () => {
+    if (!formData.title.trim()) {
+      toast({ title: "Hata", description: "Başlık zorunludur.", variant: "destructive" });
+      return;
+    }
+    if (!isValidUrl(formData.imageUrl || "")) {
+      toast({ title: "Hata", description: "Görsel URL geçersiz. Sadece / veya http/https ile başlayan adresler kullanın.", variant: "destructive" });
+      return;
+    }
     if (editingBanner) {
       updateMutation.mutate({ id: editingBanner.id, data: formData }, {
         onSuccess: () => {
           toast({ title: "Başarılı", description: "Banner güncellendi." });
           queryClient.invalidateQueries({ queryKey: getListBannersQueryKey() });
           setIsDialogOpen(false);
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Banner güncellenemedi.", variant: "destructive" });
         }
       });
     } else {
@@ -81,6 +97,9 @@ export function AdminBanners() {
           queryClient.invalidateQueries({ queryKey: getListBannersQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetAdminStatsQueryKey() });
           setIsDialogOpen(false);
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Banner oluşturulamadı.", variant: "destructive" });
         }
       });
     }
@@ -93,6 +112,9 @@ export function AdminBanners() {
           toast({ title: "Başarılı", description: "Banner silindi." });
           queryClient.invalidateQueries({ queryKey: getListBannersQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetAdminStatsQueryKey() });
+        },
+        onError: () => {
+          toast({ title: "Hata", description: "Banner silinemedi.", variant: "destructive" });
         }
       });
     }

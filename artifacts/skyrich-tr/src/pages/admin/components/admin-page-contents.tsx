@@ -48,6 +48,9 @@ export function AdminPageContents() {
         toast({ title: "Başarılı", description: "Sayfa içeriği güncellendi." });
         queryClient.invalidateQueries({ queryKey: getListPageContentsQueryKey() });
         setIsDialogOpen(false);
+      },
+      onError: () => {
+        toast({ title: "Hata", description: "Sayfa içeriği güncellenemedi.", variant: "destructive" });
       }
     });
   };
