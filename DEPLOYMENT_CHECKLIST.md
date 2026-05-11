@@ -22,10 +22,31 @@ ADMIN_API_TOKEN=<generate-64-char-random-token>
 FRONTEND_ORIGIN=https://www.skyrichbattery.com.tr
 ```
 
-## Step D — Run DB Migration / Seed
-- [ ] Apply database schema (if migrations exist)
-- [ ] Seed initial data if needed
-- [ ] Verify connection: API logs should show "Server listening"
+## Step D — Run DB Schema Push / Seed / Verify
+
+### D.1 Push schema
+```bash
+DATABASE_URL="postgresql://..." \
+pnpm --filter @workspace/db run push
+```
+
+### D.2 Seed approved products
+```bash
+DATABASE_URL="postgresql://..." \
+pnpm --filter @workspace/scripts run seed:products
+```
+
+Expected output: `Created: 12`, `Updated: 0`, `Skipped: 0`.
+
+### D.3 Verify product assets
+```bash
+pnpm --filter @workspace/scripts run verify:assets
+```
+
+Expected: exit code `0` with "All required assets present."
+
+### D.4 Verify API connection
+API logs should show "Server listening".
 
 ## Step E — Test API Health
 ```bash
