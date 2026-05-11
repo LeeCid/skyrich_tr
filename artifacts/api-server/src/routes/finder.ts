@@ -4,6 +4,25 @@ import { eq, and, lte, gte, ilike } from "drizzle-orm";
 import { CreateVehicleCompatibilityBody, GetVehicleModelsQueryParams } from "@workspace/api-zod";
 import requireAdminAuth from "../middleware/require-admin-auth";
 
+const APPROVED_PUBLIC_SKUS = new Set([
+  "HJTX9-FP",
+  "HJTX14H-FP",
+  "HJTZ10S-FP",
+  "HJTZ14S-FPZ",
+  "HJTZ14S-FP",
+  "HJ51913-FP",
+  "HJTX20HQ-FP",
+  "HJTZ7S-FPZ",
+  "HJTX20CH-FP",
+  "HJ13L-FPZ",
+  "HJT9B-FP",
+  "HJT7B-FPZ",
+]);
+
+function isPublicApproved(battery: typeof batteriesTable.$inferSelect): boolean {
+  return battery.active === true && APPROVED_PUBLIC_SKUS.has(battery.modelCode);
+}
+
 const router = Router();
 
 router.get("/finder/makes", async (req, res) => {
@@ -64,10 +83,12 @@ router.get("/finder/search", async (req, res) => {
       );
     }
 
-    const results = compatRows.map(r => ({
-      battery: r.batteries,
-      compatibility: r.vehicle_compatibility,
-    }));
+    const results = compatRows
+      .filter(r => isPublicApproved(r.batteries))
+      .map(r => ({
+        battery: r.batteries,
+        compatibility: r.vehicle_compatibility,
+      }));
 
     res.json(results);
   } catch (err) {

@@ -23,13 +23,13 @@ export function AdminBatteries() {
     modelCode: "",
     name: "",
     description: "",
-    voltage: 12,
-    capacity: 0,
-    cca: 0,
+    voltage: undefined,
+    capacity: undefined,
+    cca: undefined,
     type: "Motorcycle",
     technology: "Lithium",
     dimensions: "",
-    weight: 0,
+    weight: undefined,
     imageUrl: "",
     applications: "",
     active: true,
@@ -71,13 +71,13 @@ export function AdminBatteries() {
         modelCode: "",
         name: "",
         description: "",
-        voltage: 12,
-        capacity: 0,
-        cca: 0,
+        voltage: undefined,
+        capacity: undefined,
+        cca: undefined,
         type: "Motorcycle",
         technology: "Lithium",
         dimensions: "",
-        weight: 0,
+        weight: undefined,
         imageUrl: "",
         applications: "",
         active: true,
@@ -213,14 +213,15 @@ export function AdminBatteries() {
               </div>
               <div className="space-y-2">
                 <Label>Teknoloji</Label>
-                <Select value={formData.technology} onValueChange={(v) => setFormData({...formData, technology: v})}>
+                <Select value={formData.technology || "Lithium"} onValueChange={(v) => setFormData({...formData, technology: v})}>
                   <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
                   <SelectContent className="rounded-none">
                     <SelectItem value="Lithium">Lityum</SelectItem>
-                    <SelectItem value="AGM">AGM</SelectItem>
-                    <SelectItem value="GEL">JEL</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  Teknik değerler resmi kaynak veya işletme tarafından doğrulanmadan doldurulmamalıdır.
+                </p>
               </div>
               <div className="space-y-2">
                 <Label>Açıklama</Label>

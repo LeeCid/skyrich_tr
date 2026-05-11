@@ -1,60 +1,27 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, MessageCircle } from "lucide-react";
 import { useGetSiteSettings, getGetSiteSettingsQueryKey, useGetPageContent, getGetPageContentQueryKey } from "@workspace/api-client-react";
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "İsim en az 2 karakter olmalıdır." }),
-  email: z.string().email({ message: "Geçerli bir e-posta adresi giriniz." }),
-  subject: z.string().min(5, { message: "Konu en az 5 karakter olmalıdır." }),
-  message: z.string().min(10, { message: "Mesaj en az 10 karakter olmalıdır." }),
-});
-
 export default function Contact() {
-  const { toast } = useToast();
-  
   const { data: settings } = useGetSiteSettings({ query: { queryKey: getGetSiteSettingsQueryKey() } });
   const { data: pageContent } = useGetPageContent("iletisim-intro", { query: { queryKey: getGetPageContentQueryKey("iletisim-intro") } });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Mesajınız Gönderildi",
-      description: "En kısa sürede size dönüş yapacağız.",
-      variant: "default",
-    });
-    form.reset();
-  }
+  const hasAnyContact = settings?.address || settings?.phone || settings?.email || settings?.whatsapp;
 
   return (
     <div className="container mx-auto px-4 py-24 max-w-6xl">
       <div className="mb-16">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase mb-4">İletişim</h1>
-        {pageContent?.content && (
+        {pageContent?.content ? (
           <p className="text-muted-foreground font-mono">{pageContent.content}</p>
+        ) : (
+          <p className="text-muted-foreground font-mono">Size en kısa sürede yardımcı olmak için aşağıdaki kanallardan ulaşabilirsiniz.</p>
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Contact Info */}
         <div className="space-y-12">
-          {!settings?.address && !settings?.phone && !settings?.email && !settings?.whatsapp ? (
+          {!hasAnyContact ? (
              <p className="text-muted-foreground font-mono">İletişim bilgileri yakında eklenecek.</p>
           ) : (
             <>
@@ -71,7 +38,7 @@ export default function Contact() {
                   </div>
                 </div>
               )}
-              
+
               {settings?.phone && (
                 <div className="flex gap-6 items-start">
                   <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
@@ -117,77 +84,24 @@ export default function Contact() {
           )}
         </div>
 
-        {/* Contact Form */}
-        <div className="lg:col-span-2 bg-card border border-border p-8 md:p-12">
-          <h2 className="text-2xl font-bold uppercase mb-8">Mesaj Gönderin</h2>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="uppercase text-xs font-bold tracking-wider">İsim Soyisim</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Adınız" {...field} className="rounded-none border-border bg-background" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="uppercase text-xs font-bold tracking-wider">E-Posta</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ornek@email.com" {...field} className="rounded-none border-border bg-background" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <FormField
-                control={form.control}
-                name="subject"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold tracking-wider">Konu</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Mesajınızın konusu" {...field} className="rounded-none border-border bg-background" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold tracking-wider">Mesajınız</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Size nasıl yardımcı olabiliriz?" 
-                        className="min-h-[150px] rounded-none border-border bg-background resize-none" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="w-full md:w-auto px-12 rounded-none bg-primary hover:bg-primary/90 uppercase tracking-widest text-primary-foreground font-bold">
-                Gönder
-              </Button>
-            </form>
-          </Form>
+        {/* Contact CTA */}
+        <div className="bg-card border border-border p-8 md:p-12 flex flex-col justify-center">
+          <h2 className="text-2xl font-bold uppercase mb-4">Bize Ulaşın</h2>
+          <p className="text-muted-foreground mb-8 leading-relaxed">
+            Araç marka/model veya eski akü kodunuzu gönderin, size uygun Skyrich modelini iletelim.
+          </p>
+          {settings?.whatsapp ? (
+            <a
+              href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground uppercase tracking-widest font-bold px-8 py-4 text-sm"
+            >
+              <MessageCircle size={18} /> WhatsApp'tan Bilgi Al
+            </a>
+          ) : (
+            <p className="text-muted-foreground font-mono text-sm">WhatsApp bilgisi yakında eklenecek.</p>
+          )}
         </div>
       </div>
     </div>

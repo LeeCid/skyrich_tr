@@ -183,23 +183,23 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-background border border-border p-8 hover:border-primary transition-colors">
               <Zap className="w-12 h-12 text-primary mb-6" />
-              <h3 className="text-xl font-bold uppercase mb-3">Ultra Hafif</h3>
+              <h3 className="text-xl font-bold uppercase mb-3">Hafif Lityum Teknolojisi</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Kurşun asit akülere göre %65'e kadar daha hafif. Motorunuzun ağırlık merkezini düşürerek yol tutuşunu artırır.
+                Powersport araçlar için geliştirilmiş lityum iyon akü teknolojisi.
               </p>
             </div>
             <div className="bg-background border border-border p-8 hover:border-primary transition-colors">
               <Shield className="w-12 h-12 text-primary mb-6" />
-              <h3 className="text-xl font-bold uppercase mb-3">Uzun Ömür</h3>
+              <h3 className="text-xl font-bold uppercase mb-3">Bakım Gerektirmeyen Kullanım</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Geleneksel akülere göre 4 kata kadar daha uzun kullanım ömrü. Düşük kendi kendine deşarj oranı.
+                Düşük kendi kendine deşarz oranı ile uzun süre güvenilir performans.
               </p>
             </div>
             <div className="bg-background border border-border p-8 hover:border-primary transition-colors">
               <BatteryIcon className="w-12 h-12 text-primary mb-6" />
-              <h3 className="text-xl font-bold uppercase mb-3">Güçlü Marş</h3>
+              <h3 className="text-xl font-bold uppercase mb-3">Teknik Destek</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Soğuk havalarda bile mükemmel marş gücü. Yüksek CCA değerleri ile anında tepki.
+                Uyumlu model seçimi ve teknik bilgi için yetkili distribütör desteği.
               </p>
             </div>
           </div>

@@ -4,12 +4,33 @@ import { eq } from "drizzle-orm";
 import { CreateBatteryBody, UpdateBatteryBody, ListBatteriesQueryParams } from "@workspace/api-zod";
 import requireAdminAuth from "../middleware/require-admin-auth";
 
+const APPROVED_PUBLIC_SKUS = new Set([
+  "HJTX9-FP",
+  "HJTX14H-FP",
+  "HJTZ10S-FP",
+  "HJTZ14S-FPZ",
+  "HJTZ14S-FP",
+  "HJ51913-FP",
+  "HJTX20HQ-FP",
+  "HJTZ7S-FPZ",
+  "HJTX20CH-FP",
+  "HJ13L-FPZ",
+  "HJT9B-FP",
+  "HJT7B-FPZ",
+]);
+
+function isPublicApproved(battery: typeof batteriesTable.$inferSelect): boolean {
+  return battery.active === true && APPROVED_PUBLIC_SKUS.has(battery.modelCode);
+}
+
 const router = Router();
 
 router.get("/batteries", async (req, res) => {
   try {
     const query = ListBatteriesQueryParams.safeParse(req.query);
     let batteries = await db.select().from(batteriesTable).orderBy(batteriesTable.sortOrder, batteriesTable.id);
+
+    batteries = batteries.filter(b => isPublicApproved(b));
 
     if (query.success && query.data.featured !== undefined) {
       batteries = batteries.filter(b => b.featured === query.data.featured);
@@ -48,7 +69,7 @@ router.get("/batteries/:id", async (req, res) => {
       return;
     }
     const [battery] = await db.select().from(batteriesTable).where(eq(batteriesTable.id, id));
-    if (!battery) {
+    if (!battery || !isPublicApproved(battery)) {
       res.status(404).json({ error: "Battery not found" });
       return;
     }

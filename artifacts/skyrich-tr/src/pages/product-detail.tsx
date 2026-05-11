@@ -1,7 +1,7 @@
 import { useParams, Link } from "wouter";
 import { useGetBattery, getGetBatteryQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, MessageCircle, Phone } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function ProductDetail() {
@@ -82,7 +82,6 @@ export default function ProductDetail() {
               {battery.name}
             </h1>
             <div className="flex items-center gap-4 text-sm font-mono text-muted-foreground border-b border-border pb-6">
-              <span className="flex items-center gap-1"><Check size={14} className="text-primary" /> Stokta Var</span>
               <span>Kategori: {battery.type}</span>
             </div>
           </div>
@@ -99,23 +98,23 @@ export default function ProductDetail() {
             <dl className="grid grid-cols-1 font-mono text-sm">
               <div className="grid grid-cols-2 border-b border-border">
                 <dt className="px-4 py-3 bg-muted/30 text-muted-foreground uppercase">Voltaj (V)</dt>
-                <dd className="px-4 py-3 bg-card font-bold">{battery.voltage || '-'}</dd>
+                <dd className="px-4 py-3 bg-card font-bold">{(battery.voltage != null && battery.voltage !== 0) ? battery.voltage : 'Doğrulanacak'}</dd>
               </div>
               <div className="grid grid-cols-2 border-b border-border">
                 <dt className="px-4 py-3 bg-muted/30 text-muted-foreground uppercase">Kapasite (Ah)</dt>
-                <dd className="px-4 py-3 bg-card font-bold">{battery.capacity || '-'}</dd>
+                <dd className="px-4 py-3 bg-card font-bold">{(battery.capacity != null && battery.capacity !== 0) ? battery.capacity : 'Doğrulanacak'}</dd>
               </div>
               <div className="grid grid-cols-2 border-b border-border">
                 <dt className="px-4 py-3 bg-muted/30 text-muted-foreground uppercase">Soğuk Marş Akımı (CCA)</dt>
-                <dd className="px-4 py-3 bg-card font-bold">{battery.cca || '-'}</dd>
+                <dd className="px-4 py-3 bg-card font-bold">{(battery.cca != null && battery.cca !== 0) ? battery.cca : 'Doğrulanacak'}</dd>
               </div>
               <div className="grid grid-cols-2 border-b border-border">
                 <dt className="px-4 py-3 bg-muted/30 text-muted-foreground uppercase">Boyutlar (UxGxD)</dt>
-                <dd className="px-4 py-3 bg-card">{battery.dimensions || '-'}</dd>
+                <dd className="px-4 py-3 bg-card">{battery.dimensions || 'Doğrulanacak'}</dd>
               </div>
               <div className="grid grid-cols-2 border-b border-border">
                 <dt className="px-4 py-3 bg-muted/30 text-muted-foreground uppercase">Ağırlık (kg)</dt>
-                <dd className="px-4 py-3 bg-card">{battery.weight || '-'}</dd>
+                <dd className="px-4 py-3 bg-card">{(battery.weight != null && battery.weight !== 0) ? battery.weight : 'Doğrulanacak'}</dd>
               </div>
               <div className="grid grid-cols-2 border-b border-border">
                 <dt className="px-4 py-3 bg-muted/30 text-muted-foreground uppercase">Teknoloji</dt>
@@ -133,9 +132,16 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="mt-12">
-            <Button size="lg" className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-none uppercase tracking-widest px-12 py-6 text-lg">
-              Bayi Bul
+          <div className="mt-12 flex flex-col sm:flex-row gap-4">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-none uppercase tracking-widest px-8 py-6 text-lg">
+              <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                <MessageCircle size={20} /> WhatsApp'tan Bilgi Al
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto rounded-none uppercase tracking-widest px-8 py-6 text-lg">
+              <Link href="/iletisim" className="flex items-center gap-2">
+                <Phone size={20} /> Uyumluluğu Sor
+              </Link>
             </Button>
           </div>
         </div>
