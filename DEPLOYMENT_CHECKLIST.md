@@ -1,78 +1,110 @@
 # Deployment Checklist
 
-## Prerequisites
-- [ ] PostgreSQL database provisioned and accessible
-- [ ] All environment variables configured (see `.env.example`)
-- [ ] Domain registered and DNS configured
-- [ ] SSL certificate available (Vercel handles this automatically)
+## Step A — Create PostgreSQL Database
+- [ ] Create a PostgreSQL database (Railway, Supabase, AWS RDS, or VPS)
+- [ ] Note the connection string: `postgresql://user:password@host:port/database`
+- [ ] Ensure the database is accessible from your API host
 
-## Environment Variables
+## Step B — Deploy API to Railway / Render / VPS
+- [ ] Push code to GitHub
+- [ ] Create a new Railway/Render project from the GitHub repo
+- [ ] Set root directory to `artifacts/api-server`
+- [ ] Set build command: `pnpm install && pnpm run build`
+- [ ] Set start command: `node dist/index.mjs`
 
-### Backend (API Server)
-```
-DATABASE_URL=postgresql://...
-ADMIN_PASSWORD=your-strong-password
-ADMIN_API_TOKEN=your-secure-random-token
-FRONTEND_ORIGIN=https://www.skyrichbattery.com.tr
+## Step C — Set API Environment Variables
+```bash
+NODE_ENV=production
 PORT=3000
+DATABASE_URL=postgresql://...
+ADMIN_PASSWORD=<generate-strong-password>
+ADMIN_API_TOKEN=<generate-64-char-random-token>
+FRONTEND_ORIGIN=https://www.skyrichbattery.com.tr
 ```
 
-### Frontend (Vite SPA)
+## Step D — Run DB Migration / Seed
+- [ ] Apply database schema (if migrations exist)
+- [ ] Seed initial data if needed
+- [ ] Verify connection: API logs should show "Server listening"
+
+## Step E — Test API Health
+```bash
+curl https://api.skyrichbattery.com.tr/api/healthz
 ```
+Expected: `200 OK`
+
+## Step F — Deploy Frontend to Vercel
+- [ ] Connect GitHub repo to Vercel
+- [ ] Framework preset: **Vite**
+- [ ] Root directory: `artifacts/skyrich-tr`
+- [ ] Build command: `pnpm run build`
+- [ ] Output directory: `dist/public`
+
+## Step G — Set Frontend Environment Variable
+```bash
 VITE_API_BASE_URL=https://api.skyrichbattery.com.tr
-BASE_PATH=/
 ```
 
-## Build Steps
+## Step H — Connect www.skyrichbattery.com.tr to Vercel
+- [ ] Add `www.skyrichbattery.com.tr` as a production domain in Vercel
+- [ ] Update DNS to point to Vercel (CNAME or A record as instructed)
+- [ ] Wait for SSL certificate to provision automatically
 
-### 1. Frontend Build
+## Step I — Connect api.skyrichbattery.com.tr to API Host
+- [ ] Add `api.skyrichbattery.com.tr` as a custom domain in Railway/Render
+- [ ] Update DNS CNAME record to point to the API host
+- [ ] Verify SSL is active
+
+## Step J — Configure Cloudflare 301 Redirects
+| From | To |
+|------|-----|
+| `skyrichbattery.com.tr` | `www.skyrichbattery.com.tr` |
+| `www.skyrichpower.com.tr` | `www.skyrichbattery.com.tr` |
+| `skyrichpower.com.tr` | `www.skyrichbattery.com.tr` |
+
+## Step K — Run Production Smoke Tests
 ```bash
-cd artifacts/skyrich-tr
-npm install
-npm run build
-```
-- Output: `artifacts/skyrich-tr/dist/public/`
-- This is a static SPA with all routes falling back to `index.html`
-
-### 2. Backend Build
-```bash
-cd artifacts/api-server
-npm install
-npm run build
+API_BASE_URL=https://api.skyrichbattery.com.tr \
+FRONTEND_URL=https://www.skyrichbattery.com.tr \
+bash scripts/smoke-production.sh
 ```
 
-## Vercel Deployment (Frontend)
-1. Connect GitHub repo to Vercel
-2. Set framework preset to "Vite"
-3. Set root directory to `artifacts/skyrich-tr`
-4. Add environment variable: `VITE_API_BASE_URL`
-5. Deploy
+Expected: all tests pass.
 
-## API Server Deployment
-- Deploy `artifacts/api-server` to a Node.js host (Railway, Render, VPS)
-- Ensure `FRONTEND_ORIGIN` matches the deployed frontend URL
-- Database must be accessible from the API server
+## Step L — Admin Setup After Deploy
 
-## Post-Deployment Verification
-- [ ] Homepage loads without console errors
-- [ ] Admin login works with correct credentials
-- [ ] Admin mutations (create/update/delete) require Bearer token
-- [ ] Public API returns only active + approved SKU products
-- [ ] robots.txt is accessible and correct
-- [ ] sitemap.xml returns valid XML with approved products
-- [ ] Contact page shows WhatsApp CTA with correct phone number
-- [ ] No fake stock/price/warranty claims visible
-- [ ] 404 page works for unknown routes
-- [ ] Mobile navigation closes after selecting a link
-- [ ] All admin forms show validation errors for invalid input
-- [ ] Image URLs are validated (javascript: blocked)
+Log in to `https://www.skyrichbattery.com.tr/admin` and update:
 
-## Security Checklist
-- [ ] `ADMIN_PASSWORD` and `ADMIN_API_TOKEN` are strong and unique
-- [ ] No hardcoded secrets in source code
-- [ ] CORS restricted to production domain
-- [ ] Admin API endpoints require Bearer token
-- [ ] No admin link in public navbar/footer
+### Site Settings tab
+- [ ] WhatsApp number
+- [ ] Phone number
+- [ ] Email address
+- [ ] Physical address
+- [ ] Instagram URL
+- [ ] Facebook URL
+- [ ] SEO title and description
+
+### Hero Settings tab
+- [ ] Hero title and subtitle
+- [ ] CTA button texts and links
+- [ ] Background image URL
+
+### Popup tab
+- [ ] Active popup title, content, CTA
+- [ ] WhatsApp button link
+
+### Batteries tab
+- [ ] Upload product images for each SKU
+- [ ] Fill verified technical specs from official sources only
+- [ ] Mark products as active when ready
+
+### Banners tab
+- [ ] Add homepage carousel banners with images and links
+
+### Page Contents tab
+- [ ] Hakkımızda page text
+- [ ] Footer description
+- [ ] Contact page intro text
 
 ## Rollback Plan
 - Revert to previous git commit
