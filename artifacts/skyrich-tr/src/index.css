@@ -1,4 +1,9 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
+@source "./App.tsx";
+@source "./pages/**/*";
+@source "./components/**/*";
+@source "./lib/**/*";
+@source "./hooks/**/*";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
@@ -136,3 +141,4 @@
     @apply tracking-tight font-bold;
   }
 }
+
