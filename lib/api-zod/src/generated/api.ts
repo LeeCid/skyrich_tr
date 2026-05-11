@@ -290,6 +290,101 @@ export const DeletePopupParams = zod.object({
 });
 
 /**
+ * @summary Get all available vehicle makes
+ */
+export const GetVehicleMakesResponseItem = zod.string();
+export const GetVehicleMakesResponse = zod.array(GetVehicleMakesResponseItem);
+
+/**
+ * @summary Get vehicle models for a given make
+ */
+export const GetVehicleModelsQueryParams = zod.object({
+  make: zod.coerce.string(),
+});
+
+export const GetVehicleModelsResponseItem = zod.string();
+export const GetVehicleModelsResponse = zod.array(GetVehicleModelsResponseItem);
+
+/**
+ * @summary Find compatible batteries
+ */
+export const FindBatteriesQueryParams = zod.object({
+  make: zod.coerce.string().optional(),
+  model: zod.coerce.string().optional(),
+  year: zod.coerce.number().optional(),
+});
+
+export const FindBatteriesResponseItem = zod.object({
+  battery: zod.object({
+    id: zod.number(),
+    modelCode: zod.string(),
+    name: zod.string(),
+    description: zod.string().nullish(),
+    voltage: zod.number().nullable(),
+    capacity: zod.number().nullable(),
+    cca: zod.number().nullish(),
+    type: zod.string(),
+    technology: zod.string(),
+    dimensions: zod.string().nullish(),
+    weight: zod.number().nullish(),
+    imageUrl: zod.string().nullish(),
+    applications: zod.string().nullish(),
+    active: zod.boolean(),
+    featured: zod.boolean(),
+    sortOrder: zod.number(),
+    createdAt: zod.string(),
+  }),
+  compatibility: zod.object({
+    id: zod.number(),
+    batteryId: zod.number(),
+    vehicleMake: zod.string(),
+    vehicleModel: zod.string(),
+    yearFrom: zod.number(),
+    yearTo: zod.number(),
+    engineCc: zod.number().nullish(),
+    notes: zod.string().nullish(),
+  }),
+});
+export const FindBatteriesResponse = zod.array(FindBatteriesResponseItem);
+
+/**
+ * @summary List all vehicle compatibility entries
+ */
+export const ListVehicleCompatibilityResponseItem = zod.object({
+  id: zod.number(),
+  batteryId: zod.number(),
+  vehicleMake: zod.string(),
+  vehicleModel: zod.string(),
+  yearFrom: zod.number(),
+  yearTo: zod.number(),
+  engineCc: zod.number().nullish(),
+  notes: zod.string().nullish(),
+});
+export const ListVehicleCompatibilityResponse = zod.array(
+  ListVehicleCompatibilityResponseItem,
+);
+
+/**
+ * @summary Create a vehicle compatibility entry
+ */
+export const CreateVehicleCompatibilityBody = zod.object({
+  batteryId: zod.number(),
+  vehicleMake: zod.string(),
+  vehicleModel: zod.string(),
+  yearFrom: zod.number(),
+  yearTo: zod.number(),
+  engineCc: zod.number().optional(),
+  notes: zod.string().optional(),
+});
+
+/**
+ * @summary Delete a vehicle compatibility entry
+ */
+export const DeleteVehicleCompatibilityParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
  * @summary Get admin dashboard stats
  */
 export const GetAdminStatsResponse = zod.object({

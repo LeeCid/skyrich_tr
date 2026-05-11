@@ -168,6 +168,34 @@ export interface AdminLoginResult {
   token: string;
 }
 
+export interface VehicleCompatibility {
+  id: number;
+  batteryId: number;
+  vehicleMake: string;
+  vehicleModel: string;
+  yearFrom: number;
+  yearTo: number;
+  /** @nullable */
+  engineCc?: number | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export interface VehicleCompatibilityInput {
+  batteryId: number;
+  vehicleMake: string;
+  vehicleModel: string;
+  yearFrom: number;
+  yearTo: number;
+  engineCc?: number;
+  notes?: string;
+}
+
+export interface FinderResult {
+  battery: Battery;
+  compatibility: VehicleCompatibility;
+}
+
 export type ListBatteriesParams = {
   category?: string;
   featured?: boolean;
@@ -179,4 +207,14 @@ export type ListBannersParams = {
 
 export type ListPopupsParams = {
   active?: boolean;
+};
+
+export type GetVehicleModelsParams = {
+  make: string;
+};
+
+export type FindBatteriesParams = {
+  make?: string;
+  model?: string;
+  year?: number;
 };

@@ -10,6 +10,7 @@ export function Navbar() {
   const navItems = [
     { href: "/", label: "Ana Sayfa" },
     { href: "/urunler", label: "Ürünler" },
+    { href: "/aku-bulucu", label: "Akü Bulucu" },
     { href: "/hakkimizda", label: "Hakkımızda" },
     { href: "/iletisim", label: "İletişim" },
   ];

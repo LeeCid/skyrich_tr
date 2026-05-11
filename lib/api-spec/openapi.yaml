@@ -17,6 +17,8 @@ tags:
     description: Popup operations
   - name: admin
     description: Admin operations
+  - name: finder
+    description: Battery finder operations
 paths:
   /healthz:
     get:
@@ -269,6 +271,117 @@ paths:
       operationId: deletePopup
       tags: [popups]
       summary: Delete a popup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /finder/makes:
+    get:
+      operationId: getVehicleMakes
+      tags: [finder]
+      summary: Get all available vehicle makes
+      responses:
+        "200":
+          description: List of vehicle makes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /finder/models:
+    get:
+      operationId: getVehicleModels
+      tags: [finder]
+      summary: Get vehicle models for a given make
+      parameters:
+        - name: make
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of vehicle models
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /finder/search:
+    get:
+      operationId: findBatteries
+      tags: [finder]
+      summary: Find compatible batteries
+      parameters:
+        - name: make
+          in: query
+          schema:
+            type: string
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: year
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Compatible batteries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FinderResult"
+
+  /vehicle-compatibility:
+    get:
+      operationId: listVehicleCompatibility
+      tags: [admin]
+      summary: List all vehicle compatibility entries
+      responses:
+        "200":
+          description: List of entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VehicleCompatibility"
+    post:
+      operationId: createVehicleCompatibility
+      tags: [admin]
+      summary: Create a vehicle compatibility entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleCompatibilityInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleCompatibility"
+
+  /vehicle-compatibility/{id}:
+    delete:
+      operationId: deleteVehicleCompatibility
+      tags: [admin]
+      summary: Delete a vehicle compatibility entry
       parameters:
         - name: id
           in: path
@@ -591,3 +704,52 @@ components:
           type: boolean
         token:
           type: string
+
+    VehicleCompatibility:
+      type: object
+      required: [id, batteryId, vehicleMake, vehicleModel, yearFrom, yearTo]
+      properties:
+        id:
+          type: integer
+        batteryId:
+          type: integer
+        vehicleMake:
+          type: string
+        vehicleModel:
+          type: string
+        yearFrom:
+          type: integer
+        yearTo:
+          type: integer
+        engineCc:
+          type: ["integer", "null"]
+        notes:
+          type: ["string", "null"]
+
+    VehicleCompatibilityInput:
+      type: object
+      required: [batteryId, vehicleMake, vehicleModel, yearFrom, yearTo]
+      properties:
+        batteryId:
+          type: integer
+        vehicleMake:
+          type: string
+        vehicleModel:
+          type: string
+        yearFrom:
+          type: integer
+        yearTo:
+          type: integer
+        engineCc:
+          type: integer
+        notes:
+          type: string
+
+    FinderResult:
+      type: object
+      required: [battery, compatibility]
+      properties:
+        battery:
+          $ref: "#/components/schemas/Battery"
+        compatibility:
+          $ref: "#/components/schemas/VehicleCompatibility"

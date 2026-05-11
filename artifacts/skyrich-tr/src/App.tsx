@@ -3,6 +3,7 @@ import { Footer } from "./components/layout/footer";
 import Home from "./pages/home";
 import Products from "./pages/products";
 import ProductDetail from "./pages/product-detail";
+import BatteryFinder from "./pages/battery-finder";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import AdminLogin from "./pages/admin/login";
@@ -38,6 +39,9 @@ function Router() {
       </Route>
       <Route path="/urunler/:id">
         <Layout><ProductDetail /></Layout>
+      </Route>
+      <Route path="/aku-bulucu">
+        <Layout><BatteryFinder /></Layout>
       </Route>
       <Route path="/hakkimizda">
         <Layout><About /></Layout>

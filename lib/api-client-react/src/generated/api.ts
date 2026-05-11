@@ -26,6 +26,9 @@ import type {
   Battery,
   BatteryInput,
   BatteryUpdate,
+  FindBatteriesParams,
+  FinderResult,
+  GetVehicleModelsParams,
   HealthStatus,
   ListBannersParams,
   ListBatteriesParams,
@@ -33,6 +36,8 @@ import type {
   Popup,
   PopupInput,
   PopupUpdate,
+  VehicleCompatibility,
+  VehicleCompatibilityInput,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -1257,6 +1262,519 @@ export const useDeletePopup = <
   TContext
 > => {
   return useMutation(getDeletePopupMutationOptions(options));
+};
+
+/**
+ * @summary Get all available vehicle makes
+ */
+export const getGetVehicleMakesUrl = () => {
+  return `/api/finder/makes`;
+};
+
+export const getVehicleMakes = async (
+  options?: RequestInit,
+): Promise<string[]> => {
+  return customFetch<string[]>(getGetVehicleMakesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetVehicleMakesQueryKey = () => {
+  return [`/api/finder/makes`] as const;
+};
+
+export const getGetVehicleMakesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVehicleMakes>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getVehicleMakes>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetVehicleMakesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVehicleMakes>>> = ({
+    signal,
+  }) => getVehicleMakes({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVehicleMakes>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetVehicleMakesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVehicleMakes>>
+>;
+export type GetVehicleMakesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get all available vehicle makes
+ */
+
+export function useGetVehicleMakes<
+  TData = Awaited<ReturnType<typeof getVehicleMakes>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getVehicleMakes>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetVehicleMakesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get vehicle models for a given make
+ */
+export const getGetVehicleModelsUrl = (params: GetVehicleModelsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/finder/models?${stringifiedParams}`
+    : `/api/finder/models`;
+};
+
+export const getVehicleModels = async (
+  params: GetVehicleModelsParams,
+  options?: RequestInit,
+): Promise<string[]> => {
+  return customFetch<string[]>(getGetVehicleModelsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetVehicleModelsQueryKey = (
+  params?: GetVehicleModelsParams,
+) => {
+  return [`/api/finder/models`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetVehicleModelsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVehicleModels>>,
+  TError = ErrorType<unknown>,
+>(
+  params: GetVehicleModelsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getVehicleModels>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetVehicleModelsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getVehicleModels>>
+  > = ({ signal }) => getVehicleModels(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVehicleModels>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetVehicleModelsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVehicleModels>>
+>;
+export type GetVehicleModelsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get vehicle models for a given make
+ */
+
+export function useGetVehicleModels<
+  TData = Awaited<ReturnType<typeof getVehicleModels>>,
+  TError = ErrorType<unknown>,
+>(
+  params: GetVehicleModelsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getVehicleModels>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetVehicleModelsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Find compatible batteries
+ */
+export const getFindBatteriesUrl = (params?: FindBatteriesParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/finder/search?${stringifiedParams}`
+    : `/api/finder/search`;
+};
+
+export const findBatteries = async (
+  params?: FindBatteriesParams,
+  options?: RequestInit,
+): Promise<FinderResult[]> => {
+  return customFetch<FinderResult[]>(getFindBatteriesUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getFindBatteriesQueryKey = (params?: FindBatteriesParams) => {
+  return [`/api/finder/search`, ...(params ? [params] : [])] as const;
+};
+
+export const getFindBatteriesQueryOptions = <
+  TData = Awaited<ReturnType<typeof findBatteries>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: FindBatteriesParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof findBatteries>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getFindBatteriesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof findBatteries>>> = ({
+    signal,
+  }) => findBatteries(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof findBatteries>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type FindBatteriesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof findBatteries>>
+>;
+export type FindBatteriesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Find compatible batteries
+ */
+
+export function useFindBatteries<
+  TData = Awaited<ReturnType<typeof findBatteries>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: FindBatteriesParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof findBatteries>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getFindBatteriesQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List all vehicle compatibility entries
+ */
+export const getListVehicleCompatibilityUrl = () => {
+  return `/api/vehicle-compatibility`;
+};
+
+export const listVehicleCompatibility = async (
+  options?: RequestInit,
+): Promise<VehicleCompatibility[]> => {
+  return customFetch<VehicleCompatibility[]>(getListVehicleCompatibilityUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListVehicleCompatibilityQueryKey = () => {
+  return [`/api/vehicle-compatibility`] as const;
+};
+
+export const getListVehicleCompatibilityQueryOptions = <
+  TData = Awaited<ReturnType<typeof listVehicleCompatibility>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listVehicleCompatibility>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListVehicleCompatibilityQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listVehicleCompatibility>>
+  > = ({ signal }) => listVehicleCompatibility({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listVehicleCompatibility>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListVehicleCompatibilityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listVehicleCompatibility>>
+>;
+export type ListVehicleCompatibilityQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all vehicle compatibility entries
+ */
+
+export function useListVehicleCompatibility<
+  TData = Awaited<ReturnType<typeof listVehicleCompatibility>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listVehicleCompatibility>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListVehicleCompatibilityQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a vehicle compatibility entry
+ */
+export const getCreateVehicleCompatibilityUrl = () => {
+  return `/api/vehicle-compatibility`;
+};
+
+export const createVehicleCompatibility = async (
+  vehicleCompatibilityInput: VehicleCompatibilityInput,
+  options?: RequestInit,
+): Promise<VehicleCompatibility> => {
+  return customFetch<VehicleCompatibility>(getCreateVehicleCompatibilityUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(vehicleCompatibilityInput),
+  });
+};
+
+export const getCreateVehicleCompatibilityMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createVehicleCompatibility>>,
+    TError,
+    { data: BodyType<VehicleCompatibilityInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createVehicleCompatibility>>,
+  TError,
+  { data: BodyType<VehicleCompatibilityInput> },
+  TContext
+> => {
+  const mutationKey = ["createVehicleCompatibility"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createVehicleCompatibility>>,
+    { data: BodyType<VehicleCompatibilityInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createVehicleCompatibility(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateVehicleCompatibilityMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createVehicleCompatibility>>
+>;
+export type CreateVehicleCompatibilityMutationBody =
+  BodyType<VehicleCompatibilityInput>;
+export type CreateVehicleCompatibilityMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a vehicle compatibility entry
+ */
+export const useCreateVehicleCompatibility = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createVehicleCompatibility>>,
+    TError,
+    { data: BodyType<VehicleCompatibilityInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createVehicleCompatibility>>,
+  TError,
+  { data: BodyType<VehicleCompatibilityInput> },
+  TContext
+> => {
+  return useMutation(getCreateVehicleCompatibilityMutationOptions(options));
+};
+
+/**
+ * @summary Delete a vehicle compatibility entry
+ */
+export const getDeleteVehicleCompatibilityUrl = (id: number) => {
+  return `/api/vehicle-compatibility/${id}`;
+};
+
+export const deleteVehicleCompatibility = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteVehicleCompatibilityUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteVehicleCompatibilityMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteVehicleCompatibility>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteVehicleCompatibility>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteVehicleCompatibility"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteVehicleCompatibility>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteVehicleCompatibility(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteVehicleCompatibilityMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteVehicleCompatibility>>
+>;
+
+export type DeleteVehicleCompatibilityMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a vehicle compatibility entry
+ */
+export const useDeleteVehicleCompatibility = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteVehicleCompatibility>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteVehicleCompatibility>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteVehicleCompatibilityMutationOptions(options));
 };
 
 /**
