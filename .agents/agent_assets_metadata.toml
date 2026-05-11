@@ -1,0 +1,32 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "am1zEGH94uNVEHe-ev3p-"
+uri = "file://artifacts/skyrich-tr/public/images/hero-1.png"
+type = "image"
+title = "motorcycle racing power"
+
+[[generated]]
+id = "MJjfMvdE91pS00VVPkXWK"
+uri = "file://artifacts/skyrich-tr/public/images/hero-2.png"
+type = "image"
+title = "ATV offroad adventure"
+
+[[generated]]
+id = "zC9oeZQNuE_li7I6tg1q7"
+uri = "file://artifacts/skyrich-tr/public/images/battery-lithium.png"
+type = "image"
+title = "lithium motorcycle battery"
+
+[[generated]]
+id = "MP8eXEWS77M34OXvQrdW3"
+uri = "file://artifacts/skyrich-tr/public/images/battery-agm.png"
+type = "image"
+title = "AGM motorcycle battery"
+
+[[generated]]
+id = "cP3LRYEPPHuiqkZsyk46y"
+uri = "file://artifacts/skyrich-tr/public/images/factory.png"
+type = "image"
+title = "high tech factory floor"

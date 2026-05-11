@@ -1,22 +1,28 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Skyrich Battery TR API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: batteries
+    description: Battery model operations
+  - name: banners
+    description: Banner operations
+  - name: popups
+    description: Popup operations
+  - name: admin
+    description: Admin operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +30,289 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /batteries:
+    get:
+      operationId: listBatteries
+      tags: [batteries]
+      summary: List all batteries
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of batteries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Battery"
+    post:
+      operationId: createBattery
+      tags: [batteries]
+      summary: Create a battery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BatteryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Battery"
+
+  /batteries/{id}:
+    get:
+      operationId: getBattery
+      tags: [batteries]
+      summary: Get a battery by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Battery
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Battery"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateBattery
+      tags: [batteries]
+      summary: Update a battery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BatteryUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Battery"
+    delete:
+      operationId: deleteBattery
+      tags: [batteries]
+      summary: Delete a battery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /banners:
+    get:
+      operationId: listBanners
+      tags: [banners]
+      summary: List all banners
+      parameters:
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of banners
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Banner"
+    post:
+      operationId: createBanner
+      tags: [banners]
+      summary: Create a banner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+
+  /banners/{id}:
+    patch:
+      operationId: updateBanner
+      tags: [banners]
+      summary: Update a banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+    delete:
+      operationId: deleteBanner
+      tags: [banners]
+      summary: Delete a banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /popups:
+    get:
+      operationId: listPopups
+      tags: [popups]
+      summary: List all popups
+      parameters:
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of popups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Popup"
+    post:
+      operationId: createPopup
+      tags: [popups]
+      summary: Create a popup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PopupInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Popup"
+
+  /popups/{id}:
+    patch:
+      operationId: updatePopup
+      tags: [popups]
+      summary: Update a popup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PopupUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Popup"
+    delete:
+      operationId: deletePopup
+      tags: [popups]
+      summary: Delete a popup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLoginResult"
+        "401":
+          description: Unauthorized
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +323,271 @@ components:
       required:
         - status
 
+    Battery:
+      type: object
+      required: [id, modelCode, name, voltage, capacity, type, technology, active, featured, sortOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        modelCode:
+          type: string
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        voltage:
+          type: ["number", "null"]
+        capacity:
+          type: ["number", "null"]
+        cca:
+          type: ["integer", "null"]
+        type:
+          type: string
+        technology:
+          type: string
+        dimensions:
+          type: ["string", "null"]
+        weight:
+          type: ["number", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        applications:
+          type: ["string", "null"]
+        active:
+          type: boolean
+        featured:
+          type: boolean
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+
+    BatteryInput:
+      type: object
+      required: [modelCode, name, type, technology]
+      properties:
+        modelCode:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        voltage:
+          type: number
+        capacity:
+          type: number
+        cca:
+          type: integer
+        type:
+          type: string
+        technology:
+          type: string
+        dimensions:
+          type: string
+        weight:
+          type: number
+        imageUrl:
+          type: string
+        applications:
+          type: string
+        active:
+          type: boolean
+        featured:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    BatteryUpdate:
+      type: object
+      properties:
+        modelCode:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        voltage:
+          type: number
+        capacity:
+          type: number
+        cca:
+          type: integer
+        type:
+          type: string
+        technology:
+          type: string
+        dimensions:
+          type: string
+        weight:
+          type: number
+        imageUrl:
+          type: string
+        applications:
+          type: string
+        active:
+          type: boolean
+        featured:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    Banner:
+      type: object
+      required: [id, title, active, sortOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        subtitle:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        linkText:
+          type: ["string", "null"]
+        backgroundColor:
+          type: ["string", "null"]
+        active:
+          type: boolean
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+
+    BannerInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        linkText:
+          type: string
+        backgroundColor:
+          type: string
+        active:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    BannerUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        linkText:
+          type: string
+        backgroundColor:
+          type: string
+        active:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    Popup:
+      type: object
+      required: [id, title, active, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        buttonText:
+          type: ["string", "null"]
+        buttonUrl:
+          type: ["string", "null"]
+        active:
+          type: boolean
+        showOnce:
+          type: boolean
+        delaySeconds:
+          type: integer
+        createdAt:
+          type: string
+
+    PopupInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+        buttonText:
+          type: string
+        buttonUrl:
+          type: string
+        active:
+          type: boolean
+        showOnce:
+          type: boolean
+        delaySeconds:
+          type: integer
+
+    PopupUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+        buttonText:
+          type: string
+        buttonUrl:
+          type: string
+        active:
+          type: boolean
+        showOnce:
+          type: boolean
+        delaySeconds:
+          type: integer
+
+    AdminStats:
+      type: object
+      required: [totalBatteries, activeBatteries, activeBanners, activePopups]
+      properties:
+        totalBatteries:
+          type: integer
+        activeBatteries:
+          type: integer
+        activeBanners:
+          type: integer
+        activePopups:
+          type: integer
+
+    AdminLoginInput:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+
+    AdminLoginResult:
+      type: object
+      required: [success, token]
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string

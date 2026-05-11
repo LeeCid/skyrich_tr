@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Skyrich Battery TR"
+version = "1.0.0"
+id = "artifacts/skyrich-tr"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23582
+
+[services.development]
+run = "pnpm --filter @workspace/skyrich-tr run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/skyrich-tr", "run", "build" ]
+publicDir = "artifacts/skyrich-tr/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23582"
+BASE_PATH = "/"
