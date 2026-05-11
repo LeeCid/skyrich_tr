@@ -5,6 +5,7 @@
  * Skyrich Battery TR API
  * OpenAPI spec version: 0.1.0
  */
+import type { PopupInputFrequency } from "./popupInputFrequency";
 
 export interface PopupInput {
   title: string;
@@ -13,6 +14,8 @@ export interface PopupInput {
   buttonText?: string;
   buttonUrl?: string;
   active?: boolean;
-  showOnce?: boolean;
+  frequency?: PopupInputFrequency;
   delaySeconds?: number;
+  startDate?: string;
+  endDate?: string;
 }

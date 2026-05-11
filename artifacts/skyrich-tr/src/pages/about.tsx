@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useGetPageContent, getGetPageContentQueryKey } from "@workspace/api-client-react";
 
 export default function About() {
+  const { data: pageContent } = useGetPageContent("hakkimizda", { query: { queryKey: getGetPageContentQueryKey("hakkimizda") } });
+
   return (
     <div className="flex flex-col">
       {/* Hero */}
@@ -21,15 +24,13 @@ export default function About() {
           <div>
             <h2 className="text-3xl font-bold tracking-tighter uppercase mb-6 text-primary">Skyrich Battery Türkiye</h2>
             <div className="space-y-6 text-muted-foreground leading-relaxed">
-              <p>
-                Skyrich Battery, yüksek performanslı lityum ve AGM powersport akülerinde küresel bir liderdir. Dünya çapında milyonlarca motosiklet tutkunu ve profesyonel yarışçı tarafından tercih edilen Skyrich, KTM, Ducati, ve Husqvarna gibi prestijli markaların Orijinal Ekipman (OEM) tedarikçisidir.
-              </p>
-              <p>
-                Türkiye distribütörü olarak misyonumuz, bu üstün teknolojiyi Türk motosiklet kullanıcılarına en güvenilir ve hızlı şekilde ulaştırmaktır. Sadece bir ürün değil, kesintisiz bir sürüş deneyimi ve maksimum performans sunuyoruz.
-              </p>
-              <p>
-                Geniş bayi ağımız ve uzman teknik ekibimizle, doğru akü seçimi ve satış sonrası destekte her zaman yanınızdayız.
-              </p>
+              {pageContent?.content ? (
+                pageContent.content.split('\n').map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))
+              ) : (
+                <p>İçerik yakında eklenecek.</p>
+              )}
             </div>
             
             <div className="mt-10">
@@ -40,21 +41,8 @@ export default function About() {
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-card border border-border p-8 text-center flex flex-col justify-center min-h-[200px]">
-              <div className="text-5xl font-bold text-primary mb-2 font-mono">10+</div>
-              <div className="text-sm font-bold uppercase text-muted-foreground">Yıllık Deneyim</div>
-            </div>
-            <div className="bg-card border border-border p-8 text-center flex flex-col justify-center min-h-[200px] mt-8">
-              <div className="text-5xl font-bold text-primary mb-2 font-mono">50+</div>
-              <div className="text-sm font-bold uppercase text-muted-foreground">Aktif Bayi</div>
-            </div>
-            <div className="bg-card border border-border p-8 text-center flex flex-col justify-center min-h-[200px] -mt-8">
-              <div className="text-5xl font-bold text-primary mb-2 font-mono">OEM</div>
-              <div className="text-sm font-bold uppercase text-muted-foreground">Kalite Standartı</div>
-            </div>
-            <div className="bg-card border border-border p-8 text-center flex flex-col justify-center min-h-[200px]">
-              <div className="text-5xl font-bold text-primary mb-2 font-mono">%100</div>
-              <div className="text-sm font-bold uppercase text-muted-foreground">Müşteri Memnuniyeti</div>
+            {/* Kept empty or original styling if required, but task says "Remove ALL hardcoded stats" so let's remove the stats boxes entirely, or leave empty styled boxes? The rules say "Remove ALL hardcoded stats... Keep the page layout and styling". Removing the text inside makes them empty. Let's just remove the boxes as they are stats. Wait, the rule says "Keep the page layout and styling". So if I remove the whole div with the 4 boxes, the right column is empty. Let's remove the whole right column content but keep the empty grid column if needed, or just let it span. Actually, let's remove the 4 stats boxes. */}
+            <div className="bg-card border border-border p-8 text-center flex flex-col justify-center min-h-[200px] opacity-0 pointer-events-none">
             </div>
           </div>
         </div>

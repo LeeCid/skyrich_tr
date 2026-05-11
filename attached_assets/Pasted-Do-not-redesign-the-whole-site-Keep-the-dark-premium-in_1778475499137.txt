@@ -1,0 +1,91 @@
+Do not redesign the whole site. Keep the dark premium industrial Skyrich visual direction, but fix production-blocking content, mobile UX, and public trust issues.
+
+Critical public-content fixes:
+
+1. Remove all fake or unverified commercial claims:
+- remove “Stokta Var”
+- remove “2025 model”
+- remove “Ücretsiz kargo”
+- remove “%10 indirim”
+- remove “ilk sipariş”
+- remove any fake campaign text
+- remove fake price/stock/shipping claims
+
+2. Remove unsupported categories:
+The site should only focus on Skyrich lithium battery products imported by the distributor.
+Remove public references to AGM Aküler and Jel Aküler unless those products are actually managed and approved in admin.
+
+3. Replace popup content:
+Title: “Uyumlu Aküyü Birlikte Bulalım”
+Body: “Araç marka/model veya eski akü kodunuzu gönderin, size uygun Skyrich modelini iletelim.”
+CTA: “WhatsApp’tan Sor”
+No discount or order claim.
+
+4. Hide admin from public navigation:
+Remove “Bayi / Admin” from the public mobile/desktop menu.
+Admin should only be accessible from /admin/login.
+If a public dealer CTA is needed, call it “Bayi Başvurusu”, not Admin.
+
+5. Remove fake placeholder contact data:
+Do not show +90 (212) 555 00 00 or fake email/address.
+Show only real values from admin settings.
+If missing, hide the field or show “Yakında”.
+
+6. Product images:
+Large “Görsel Yok” boxes make the site look unfinished.
+Use a clean neutral battery placeholder illustration/card instead.
+Reduce placeholder height on mobile.
+Do not let missing images dominate the screen.
+
+7. Product specs:
+Do not invent technical specs.
+If specs were sample/generated, clear them or mark as unverified.
+Public UI should display “Doğrulanacak” only for fields that intentionally exist but are not filled.
+Do not show fake voltage, CCA, capacity, dimensions, weight.
+
+8. Mobile polish:
+- reduce excessive letter spacing on buttons and body copy
+- reduce giant CTA button width/height on mobile
+- improve product card spacing
+- make technical tables easier to scan
+- keep premium industrial look but reduce “AI template” feel
+
+9. Hero copy:
+Use this safer official distributor copy:
+
+Title:
+“Skyrich Lityum Aküler Türkiye’de”
+
+Subtitle:
+“Skyrich Türkiye Resmi Distribütörü olarak motosiklet, ATV, UTV ve powersport araçlar için lityum akü çözümleri sunuyoruz.”
+
+CTA:
+“Ürünleri İncele”
+“Uyumlu Aküyü Sor”
+
+10. Product visibility:
+Only these 12 SKUs should exist publicly when active:
+HJTX9-FP
+HJTX14H-FP
+HJTZ10S-FP
+HJTZ14S-FPZ
+HJTZ14S-FP
+HJ51913-FP
+HJTX20HQ-FP
+HJTZ7S-FPZ
+HJTX20CH-FP
+HJ13L-FPZ
+HJT9B-FP
+HJT7B-FPZ
+
+11. Replit badge:
+The “Made with Replit” badge is acceptable only for preview.
+Document that it must be removed or avoided before connecting the real domain.
+
+After fixing, summarize:
+- changed public copy
+- removed fake claims
+- updated popup
+- hidden admin nav
+- mobile visual improvements
+- remaining required manual data such as product images and verified specs

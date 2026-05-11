@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { useListBanners, getListBannersQueryKey, useListBatteries, getListBatteriesQueryKey, useListPopups, getListPopupsQueryKey } from "@workspace/api-client-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { 
+  useListBanners, getListBannersQueryKey, 
+  useListBatteries, getListBatteriesQueryKey, 
+  useListPopups, getListPopupsQueryKey,
+  useGetHeroSettings, getGetHeroSettingsQueryKey
+} from "@workspace/api-client-react";
 import { Zap, Shield, Battery as BatteryIcon, ArrowRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -11,24 +16,33 @@ export default function Home() {
   const { data: banners } = useListBanners({ active: true }, { query: { queryKey: getListBannersQueryKey({ active: true }) } });
   const { data: featuredBatteries } = useListBatteries({ featured: true }, { query: { queryKey: getListBatteriesQueryKey({ featured: true }) } });
   const { data: popups } = useListPopups({ active: true }, { query: { queryKey: getListPopupsQueryKey({ active: true }) } });
+  const { data: hero } = useGetHeroSettings({ query: { queryKey: getGetHeroSettingsQueryKey() } });
 
   const [emblaRef] = useEmblaCarousel({ loop: true });
   const [activePopup, setActivePopup] = useState<any>(null);
 
   useEffect(() => {
-    if (popups && popups.length > 0) {
-      const popup = popups[0];
-      const hasSeen = localStorage.getItem(`popup_${popup.id}`);
-      if (!popup.showOnce || !hasSeen) {
-        const timer = setTimeout(() => {
-          setActivePopup(popup);
-          if (popup.showOnce) {
-            localStorage.setItem(`popup_${popup.id}`, 'true');
-          }
-        }, (popup.delaySeconds || 0) * 1000);
-        return () => clearTimeout(timer);
-      }
+    if (!popups || popups.length === 0) return;
+
+    const popup = popups[0];
+    const now = new Date();
+
+    if (popup.startDate && new Date(popup.startDate) > now) return;
+    if (popup.endDate && new Date(popup.endDate) < now) return;
+    if (popup.frequency === 'disabled') return;
+    if (popup.frequency === 'once-per-session') {
+      const hasSeen = sessionStorage.getItem(`popup_session_${popup.id}`);
+      if (hasSeen) return;
     }
+
+    const timer = setTimeout(() => {
+      setActivePopup(popup);
+      if (popup.frequency === 'once-per-session') {
+        sessionStorage.setItem(`popup_session_${popup.id}`, 'true');
+      }
+    }, (popup.delaySeconds || 0) * 1000);
+
+    return () => clearTimeout(timer);
   }, [popups]);
 
   return (
@@ -68,18 +82,34 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="relative h-full flex flex-col items-center justify-center text-center px-4 z-10 bg-[url('/images/hero-1.png')] bg-cover bg-center">
+          <div 
+            className="relative h-full flex flex-col items-center justify-center text-center px-4 z-10 bg-cover bg-center"
+            style={{ backgroundImage: `url(${hero?.bgImageUrl || '/images/hero-1.png'})` }}
+          >
             <div className="absolute inset-0 bg-black/60" />
             <div className="relative z-10">
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6 uppercase">
-                Gücün Zirvesi
-              </h1>
-              <p className="text-xl text-gray-300 mb-8 max-w-2xl font-mono mx-auto">
-                Yeni nesil lityum teknolojisi ile sınırları aşın.
-              </p>
-              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-none">
-                <Link href="/urunler">TÜM ÜRÜNLER</Link>
-              </Button>
+              {hero?.title && (
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6 uppercase">
+                  {hero.title}
+                </h1>
+              )}
+              {hero?.subtitle && (
+                <p className="text-xl text-gray-300 mb-8 max-w-2xl font-mono mx-auto">
+                  {hero.subtitle}
+                </p>
+              )}
+              <div className="flex gap-4 justify-center">
+                {hero?.cta1Text && hero?.cta1Link && (
+                  <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-none">
+                    <Link href={hero.cta1Link}>{hero.cta1Text}</Link>
+                  </Button>
+                )}
+                {hero?.cta2Text && hero?.cta2Link && (
+                  <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-black rounded-none">
+                    <Link href={hero.cta2Link}>{hero.cta2Text}</Link>
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -111,7 +141,10 @@ export default function Home() {
                     {battery.imageUrl ? (
                       <img src={battery.imageUrl} alt={battery.name} className="w-full h-full object-contain mix-blend-screen drop-shadow-xl group-hover:scale-105 transition-transform duration-500" />
                     ) : (
-                      <BatteryIcon size={64} className="text-muted-foreground/30" />
+                      <div className="flex flex-col items-center justify-center p-4 bg-background border border-border h-24 w-full">
+                        <BatteryIcon size={24} className="text-muted-foreground mb-1" />
+                        <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{battery.modelCode}</span>
+                      </div>
                     )}
                   </div>
                   <div className="p-6 flex flex-col flex-1">
@@ -191,7 +224,11 @@ export default function Home() {
             {activePopup?.buttonUrl && activePopup?.buttonText && (
               <div className="flex justify-end">
                 <Button asChild className="w-full rounded-none bg-primary text-primary-foreground hover:bg-primary/90 uppercase tracking-wider">
-                  <a href={activePopup.buttonUrl} target="_blank" rel="noopener noreferrer">{activePopup.buttonText}</a>
+                  {activePopup.buttonUrl.startsWith('https://wa.me/') ? (
+                    <a href={activePopup.buttonUrl} target="_blank" rel="noopener noreferrer">{activePopup.buttonText}</a>
+                  ) : (
+                    <Link href={activePopup.buttonUrl}>{activePopup.buttonText}</Link>
+                  )}
                 </Button>
               </div>
             )}

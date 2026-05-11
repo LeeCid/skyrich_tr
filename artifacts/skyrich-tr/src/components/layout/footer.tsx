@@ -1,6 +1,10 @@
 import { Link } from "wouter";
+import { useGetSiteSettings, getGetSiteSettingsQueryKey, useGetPageContent, getGetPageContentQueryKey } from "@workspace/api-client-react";
 
 export function Footer() {
+  const { data: settings } = useGetSiteSettings({ query: { queryKey: getGetSiteSettingsQueryKey() } });
+  const { data: footerContent } = useGetPageContent("footer-description", { query: { queryKey: getGetPageContentQueryKey("footer-description") } });
+
   return (
     <footer className="border-t border-border bg-card">
       <div className="container mx-auto px-4 py-12">
@@ -10,9 +14,23 @@ export function Footer() {
               <span className="font-mono text-2xl font-bold tracking-tighter text-primary">SKYRICH</span>
               <span className="text-sm font-semibold tracking-widest text-muted-foreground">POWER</span>
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Yüksek performanslı lityum ve AGM motosiklet aküleri. Türkiye'nin gücü.
-            </p>
+            {footerContent?.content && (
+              <p className="text-sm text-muted-foreground">
+                {footerContent.content}
+              </p>
+            )}
+            <div className="flex gap-4 pt-2 text-muted-foreground">
+              {settings?.instagram && (
+                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  Instagram
+                </a>
+              )}
+              {settings?.facebook && (
+                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  Facebook
+                </a>
+              )}
+            </div>
           </div>
           
           <div>
@@ -28,17 +46,16 @@ export function Footer() {
             <h3 className="font-semibold mb-4 text-foreground">Kategoriler</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/urunler?category=Lithium" className="hover:text-primary transition-colors">Lityum Aküler</Link></li>
-              <li><Link href="/urunler?category=AGM" className="hover:text-primary transition-colors">AGM Aküler</Link></li>
-              <li><Link href="/urunler?category=GEL" className="hover:text-primary transition-colors">Jel Aküler</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-semibold mb-4 text-foreground">İletişim</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>info@skyrichbattery.com.tr</li>
-              <li>+90 (212) 555 00 00</li>
-              <li>İstanbul, Türkiye</li>
+              {settings?.email && <li>{settings.email}</li>}
+              {settings?.phone && <li>{settings.phone}</li>}
+              {settings?.whatsapp && <li>Whatsapp: {settings.whatsapp}</li>}
+              {settings?.address && <li>{settings.address}</li>}
             </ul>
           </div>
         </div>
@@ -47,9 +64,6 @@ export function Footer() {
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Skyrich Battery Türkiye. Tüm hakları saklıdır.
           </p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <Link href="/admin" className="hover:text-primary transition-colors">Yönetici Girişi</Link>
-          </div>
         </div>
       </div>
     </footer>

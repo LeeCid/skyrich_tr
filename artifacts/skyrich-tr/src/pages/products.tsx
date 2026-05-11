@@ -46,8 +46,6 @@ export default function Products() {
             <SelectContent className="rounded-none border-border">
               <SelectItem value="all">Tüm Kategoriler</SelectItem>
               <SelectItem value="Lithium">Lityum Aküler</SelectItem>
-              <SelectItem value="AGM">AGM Aküler</SelectItem>
-              <SelectItem value="GEL">Jel Aküler</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -80,7 +78,10 @@ export default function Products() {
                   {battery.imageUrl ? (
                     <img src={battery.imageUrl} alt={battery.name} className="w-full h-full object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <BatteryIcon size={64} className="text-muted-foreground/30" />
+                    <div className="flex flex-col items-center justify-center p-4 bg-background border border-border">
+                      <BatteryIcon size={32} className="text-muted-foreground mb-2" />
+                      <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{battery.modelCode}</span>
+                    </div>
                   )}
                 </div>
                 <div className="p-6 flex flex-col flex-1">

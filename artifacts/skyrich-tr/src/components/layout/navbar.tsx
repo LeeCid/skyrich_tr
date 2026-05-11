@@ -36,9 +36,6 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
-          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground ml-4">
-            <Link href="/admin">Bayi / Admin</Link>
-          </Button>
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -66,11 +63,6 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
-          <div className="pt-2">
-            <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-              <Link href="/admin" onClick={() => setIsMenuOpen(false)}>Bayi / Admin</Link>
-            </Button>
-          </div>
         </div>
       )}
     </header>

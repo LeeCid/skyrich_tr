@@ -7,6 +7,9 @@ import { LogOut, Battery, Image as ImageIcon, MessageSquare } from "lucide-react
 import { AdminBatteries } from "./components/admin-batteries";
 import { AdminBanners } from "./components/admin-banners";
 import { AdminPopups } from "./components/admin-popups";
+import { AdminSiteSettings } from "./components/admin-site-settings";
+import { AdminHeroSettings } from "./components/admin-hero-settings";
+import { AdminPageContents } from "./components/admin-page-contents";
 
 export default function AdminPanel() {
   const [, setLocation] = useLocation();
@@ -74,10 +77,13 @@ export default function AdminPanel() {
         </div>
 
         <Tabs defaultValue="batteries" className="w-full">
-          <TabsList className="bg-card border border-border rounded-none p-1 h-12 mb-6 w-full justify-start overflow-x-auto">
+          <TabsList className="bg-card border border-border rounded-none p-1 h-12 mb-6 w-full justify-start overflow-x-auto flex-wrap sm:flex-nowrap min-h-max">
             <TabsTrigger value="batteries" className="rounded-none uppercase tracking-wider font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Aküler</TabsTrigger>
             <TabsTrigger value="banners" className="rounded-none uppercase tracking-wider font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Bannerlar</TabsTrigger>
             <TabsTrigger value="popups" className="rounded-none uppercase tracking-wider font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Popuplar</TabsTrigger>
+            <TabsTrigger value="site" className="rounded-none uppercase tracking-wider font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Site Ayarları</TabsTrigger>
+            <TabsTrigger value="hero" className="rounded-none uppercase tracking-wider font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Hero Ayarları</TabsTrigger>
+            <TabsTrigger value="pages" className="rounded-none uppercase tracking-wider font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sayfa İçerikleri</TabsTrigger>
           </TabsList>
           
           <TabsContent value="batteries">
@@ -90,6 +96,18 @@ export default function AdminPanel() {
           
           <TabsContent value="popups">
             <AdminPopups />
+          </TabsContent>
+
+          <TabsContent value="site">
+            <AdminSiteSettings />
+          </TabsContent>
+
+          <TabsContent value="hero">
+            <AdminHeroSettings />
+          </TabsContent>
+
+          <TabsContent value="pages">
+            <AdminPageContents />
           </TabsContent>
         </Tabs>
       </main>

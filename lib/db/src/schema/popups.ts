@@ -10,8 +10,10 @@ export const popupsTable = pgTable("popups", {
   buttonText: text("button_text"),
   buttonUrl: text("button_url"),
   active: boolean("active").notNull().default(true),
-  showOnce: boolean("show_once").notNull().default(true),
+  frequency: text("frequency").notNull().default("once-per-session"),
   delaySeconds: integer("delay_seconds").notNull().default(3),
+  startDate: text("start_date"),
+  endDate: text("end_date"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

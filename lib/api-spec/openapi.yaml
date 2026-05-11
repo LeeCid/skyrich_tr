@@ -281,6 +281,123 @@ paths:
         "204":
           description: Deleted
 
+  /site-settings:
+    get:
+      operationId: getSiteSettings
+      tags: [admin]
+      summary: Get site settings
+      responses:
+        "200":
+          description: Site settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+    put:
+      operationId: updateSiteSettings
+      tags: [admin]
+      summary: Update site settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteSettingsUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
+  /hero-settings:
+    get:
+      operationId: getHeroSettings
+      tags: [admin]
+      summary: Get hero settings
+      responses:
+        "200":
+          description: Hero settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroSettings"
+    put:
+      operationId: updateHeroSettings
+      tags: [admin]
+      summary: Update hero settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HeroSettingsUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroSettings"
+
+  /page-contents:
+    get:
+      operationId: listPageContents
+      tags: [admin]
+      summary: List all page contents
+      responses:
+        "200":
+          description: Page contents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PageContent"
+
+  /page-contents/{key}:
+    get:
+      operationId: getPageContent
+      tags: [admin]
+      summary: Get page content by key
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageContent"
+    put:
+      operationId: updatePageContent
+      tags: [admin]
+      summary: Update page content by key
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PageContentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageContent"
+
   /finder/makes:
     get:
       operationId: getVehicleMakes
@@ -628,10 +745,15 @@ components:
           type: ["string", "null"]
         active:
           type: boolean
-        showOnce:
-          type: boolean
+        frequency:
+          type: string
+          enum: [always, once-per-session, disabled]
         delaySeconds:
           type: integer
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
         createdAt:
           type: string
 
@@ -651,10 +773,15 @@ components:
           type: string
         active:
           type: boolean
-        showOnce:
-          type: boolean
+        frequency:
+          type: string
+          enum: [always, once-per-session, disabled]
         delaySeconds:
           type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
 
     PopupUpdate:
       type: object
@@ -671,10 +798,15 @@ components:
           type: string
         active:
           type: boolean
-        showOnce:
-          type: boolean
+        frequency:
+          type: string
+          enum: [always, once-per-session, disabled]
         delaySeconds:
           type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
 
     AdminStats:
       type: object
@@ -753,3 +885,116 @@ components:
           $ref: "#/components/schemas/Battery"
         compatibility:
           $ref: "#/components/schemas/VehicleCompatibility"
+
+    SiteSettings:
+      type: object
+      required: [id, updatedAt]
+      properties:
+        id:
+          type: integer
+        whatsapp:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        facebook:
+          type: ["string", "null"]
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+        footerDescription:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+
+    SiteSettingsUpdate:
+      type: object
+      properties:
+        whatsapp:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        instagram:
+          type: string
+        facebook:
+          type: string
+        seoTitle:
+          type: string
+        seoDescription:
+          type: string
+        footerDescription:
+          type: string
+
+    HeroSettings:
+      type: object
+      required: [id, updatedAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        cta1Text:
+          type: ["string", "null"]
+        cta1Link:
+          type: ["string", "null"]
+        cta2Text:
+          type: ["string", "null"]
+        cta2Link:
+          type: ["string", "null"]
+        bgImageUrl:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+
+    HeroSettingsUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        cta1Text:
+          type: string
+        cta1Link:
+          type: string
+        cta2Text:
+          type: string
+        cta2Link:
+          type: string
+        bgImageUrl:
+          type: string
+
+    PageContent:
+      type: object
+      required: [id, key, updatedAt]
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        title:
+          type: ["string", "null"]
+        content:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+
+    PageContentUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string

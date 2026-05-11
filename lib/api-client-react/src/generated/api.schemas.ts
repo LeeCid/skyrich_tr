@@ -113,6 +113,15 @@ export interface BannerUpdate {
   sortOrder?: number;
 }
 
+export type PopupFrequency =
+  (typeof PopupFrequency)[keyof typeof PopupFrequency];
+
+export const PopupFrequency = {
+  always: "always",
+  "once-per-session": "once-per-session",
+  disabled: "disabled",
+} as const;
+
 export interface Popup {
   id: number;
   title: string;
@@ -125,10 +134,23 @@ export interface Popup {
   /** @nullable */
   buttonUrl?: string | null;
   active: boolean;
-  showOnce?: boolean;
+  frequency?: PopupFrequency;
   delaySeconds?: number;
+  /** @nullable */
+  startDate?: string | null;
+  /** @nullable */
+  endDate?: string | null;
   createdAt: string;
 }
+
+export type PopupInputFrequency =
+  (typeof PopupInputFrequency)[keyof typeof PopupInputFrequency];
+
+export const PopupInputFrequency = {
+  always: "always",
+  "once-per-session": "once-per-session",
+  disabled: "disabled",
+} as const;
 
 export interface PopupInput {
   title: string;
@@ -137,9 +159,20 @@ export interface PopupInput {
   buttonText?: string;
   buttonUrl?: string;
   active?: boolean;
-  showOnce?: boolean;
+  frequency?: PopupInputFrequency;
   delaySeconds?: number;
+  startDate?: string;
+  endDate?: string;
 }
+
+export type PopupUpdateFrequency =
+  (typeof PopupUpdateFrequency)[keyof typeof PopupUpdateFrequency];
+
+export const PopupUpdateFrequency = {
+  always: "always",
+  "once-per-session": "once-per-session",
+  disabled: "disabled",
+} as const;
 
 export interface PopupUpdate {
   title?: string;
@@ -148,8 +181,10 @@ export interface PopupUpdate {
   buttonText?: string;
   buttonUrl?: string;
   active?: boolean;
-  showOnce?: boolean;
+  frequency?: PopupUpdateFrequency;
   delaySeconds?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface AdminStats {
@@ -194,6 +229,85 @@ export interface VehicleCompatibilityInput {
 export interface FinderResult {
   battery: Battery;
   compatibility: VehicleCompatibility;
+}
+
+export interface SiteSettings {
+  id: number;
+  /** @nullable */
+  whatsapp?: string | null;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  email?: string | null;
+  /** @nullable */
+  address?: string | null;
+  /** @nullable */
+  instagram?: string | null;
+  /** @nullable */
+  facebook?: string | null;
+  /** @nullable */
+  seoTitle?: string | null;
+  /** @nullable */
+  seoDescription?: string | null;
+  /** @nullable */
+  footerDescription?: string | null;
+  updatedAt: string;
+}
+
+export interface SiteSettingsUpdate {
+  whatsapp?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  instagram?: string;
+  facebook?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  footerDescription?: string;
+}
+
+export interface HeroSettings {
+  id: number;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  subtitle?: string | null;
+  /** @nullable */
+  cta1Text?: string | null;
+  /** @nullable */
+  cta1Link?: string | null;
+  /** @nullable */
+  cta2Text?: string | null;
+  /** @nullable */
+  cta2Link?: string | null;
+  /** @nullable */
+  bgImageUrl?: string | null;
+  updatedAt: string;
+}
+
+export interface HeroSettingsUpdate {
+  title?: string;
+  subtitle?: string;
+  cta1Text?: string;
+  cta1Link?: string;
+  cta2Text?: string;
+  cta2Link?: string;
+  bgImageUrl?: string;
+}
+
+export interface PageContent {
+  id: number;
+  key: string;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  content?: string | null;
+  updatedAt: string;
+}
+
+export interface PageContentUpdate {
+  title?: string;
+  content?: string;
 }
 
 export type ListBatteriesParams = {

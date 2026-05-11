@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Popup, PopupInput } from "@workspace/api-client-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popup, PopupInput, PopupInputFrequency } from "@workspace/api-client-react";
 
 export function AdminPopups() {
   const { toast } = useToast();
@@ -25,8 +26,10 @@ export function AdminPopups() {
     buttonText: "",
     buttonUrl: "",
     active: true,
-    showOnce: true,
-    delaySeconds: 2
+    frequency: 'always' as PopupInputFrequency,
+    delaySeconds: 2,
+    startDate: "",
+    endDate: ""
   });
 
   const { data: popups, isLoading } = useListPopups(undefined, { 
@@ -47,8 +50,10 @@ export function AdminPopups() {
         buttonText: popup.buttonText || "",
         buttonUrl: popup.buttonUrl || "",
         active: popup.active,
-        showOnce: popup.showOnce || false,
-        delaySeconds: popup.delaySeconds || 0
+        frequency: popup.frequency || 'always',
+        delaySeconds: popup.delaySeconds || 0,
+        startDate: popup.startDate || "",
+        endDate: popup.endDate || ""
       });
     } else {
       setEditingPopup(null);
@@ -59,8 +64,10 @@ export function AdminPopups() {
         buttonText: "",
         buttonUrl: "",
         active: true,
-        showOnce: true,
-        delaySeconds: 2
+        frequency: 'always',
+        delaySeconds: 2,
+        startDate: "",
+        endDate: ""
       });
     }
     setIsDialogOpen(true);
@@ -114,7 +121,7 @@ export function AdminPopups() {
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="font-bold uppercase text-xs tracking-wider">Başlık</TableHead>
               <TableHead className="font-bold uppercase text-xs tracking-wider text-center">Gecikme (sn)</TableHead>
-              <TableHead className="font-bold uppercase text-xs tracking-wider text-center">Tek Gösterim</TableHead>
+              <TableHead className="font-bold uppercase text-xs tracking-wider text-center">Sıklık</TableHead>
               <TableHead className="font-bold uppercase text-xs tracking-wider text-center">Durum</TableHead>
               <TableHead className="font-bold uppercase text-xs tracking-wider text-right">İşlemler</TableHead>
             </TableRow>
@@ -134,7 +141,9 @@ export function AdminPopups() {
                     </div>
                   </TableCell>
                   <TableCell className="text-center font-mono">{popup.delaySeconds}</TableCell>
-                  <TableCell className="text-center">{popup.showOnce ? 'Evet' : 'Hayır'}</TableCell>
+                  <TableCell className="text-center">
+                    {popup.frequency === 'always' ? 'Her Zaman' : popup.frequency === 'once-per-session' ? 'Oturum Başı' : 'Devre Dışı'}
+                  </TableCell>
                   <TableCell className="text-center">
                     <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${popup.active ? 'text-green-500 bg-green-500/10 border border-green-500/20' : 'text-red-500 bg-red-500/10 border border-red-500/20'}`}>
                       {popup.active ? 'Aktif' : 'Pasif'}
@@ -184,15 +193,34 @@ export function AdminPopups() {
                 <Label>Gecikme (Saniye)</Label>
                 <Input type="number" value={formData.delaySeconds || 0} onChange={(e) => setFormData({...formData, delaySeconds: parseInt(e.target.value)})} className="rounded-none font-mono" />
               </div>
+              <div className="space-y-2">
+                <Label>Gösterim Sıklığı</Label>
+                <Select value={formData.frequency} onValueChange={(val) => setFormData({...formData, frequency: val as PopupInputFrequency})}>
+                  <SelectTrigger className="rounded-none">
+                    <SelectValue placeholder="Seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-none">
+                    <SelectItem value="always">Her Zaman</SelectItem>
+                    <SelectItem value="once-per-session">Oturum Başına Bir Kez</SelectItem>
+                    <SelectItem value="disabled">Devre Dışı</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <div className="space-y-2">
+                <Label>Başlangıç Tarihi (Opsiyonel)</Label>
+                <Input type="date" value={formData.startDate || ""} onChange={(e) => setFormData({...formData, startDate: e.target.value})} className="rounded-none" />
+              </div>
+              <div className="space-y-2">
+                <Label>Bitiş Tarihi (Opsiyonel)</Label>
+                <Input type="date" value={formData.endDate || ""} onChange={(e) => setFormData({...formData, endDate: e.target.value})} className="rounded-none" />
+              </div>
             </div>
             <div className="flex gap-6 pt-4">
               <div className="flex items-center space-x-2">
                 <Switch id="popup-active" checked={formData.active} onCheckedChange={(c) => setFormData({...formData, active: c})} />
                 <Label htmlFor="popup-active" className="cursor-pointer">Aktif</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch id="popup-show-once" checked={formData.showOnce} onCheckedChange={(c) => setFormData({...formData, showOnce: c})} />
-                <Label htmlFor="popup-show-once" className="cursor-pointer">Kullanıcıya Sadece 1 Kez Göster</Label>
               </div>
             </div>
           </div>

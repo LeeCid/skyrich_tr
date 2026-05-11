@@ -6,7 +6,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, MessageCircle } from "lucide-react";
+import { useGetSiteSettings, getGetSiteSettingsQueryKey, useGetPageContent, getGetPageContentQueryKey } from "@workspace/api-client-react";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "İsim en az 2 karakter olmalıdır." }),
@@ -18,6 +19,9 @@ const formSchema = z.object({
 export default function Contact() {
   const { toast } = useToast();
   
+  const { data: settings } = useGetSiteSettings({ query: { queryKey: getGetSiteSettingsQueryKey() } });
+  const { data: pageContent } = useGetPageContent("iletisim-intro", { query: { queryKey: getGetPageContentQueryKey("iletisim-intro") } });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,51 +46,75 @@ export default function Contact() {
     <div className="container mx-auto px-4 py-24 max-w-6xl">
       <div className="mb-16">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase mb-4">İletişim</h1>
-        <p className="text-muted-foreground font-mono">Sorularınız veya bayilik talepleriniz için bize ulaşın.</p>
+        {pageContent?.content && (
+          <p className="text-muted-foreground font-mono">{pageContent.content}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
         {/* Contact Info */}
         <div className="space-y-12">
-          <div className="flex gap-6 items-start">
-            <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
-              <MapPin className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold uppercase tracking-widest text-sm mb-2">Merkez Ofis</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Atatürk Mah. İkitelli Cad.<br />
-                No: 123 Kat: 4<br />
-                Küçükçekmece, İstanbul
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex gap-6 items-start">
-            <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
-              <Phone className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold uppercase tracking-widest text-sm mb-2">Telefon</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                +90 (212) 555 00 00<br />
-                +90 (532) 555 00 00
-              </p>
-            </div>
-          </div>
+          {!settings?.address && !settings?.phone && !settings?.email && !settings?.whatsapp ? (
+             <p className="text-muted-foreground font-mono">İletişim bilgileri yakında eklenecek.</p>
+          ) : (
+            <>
+              {settings?.address && (
+                <div className="flex gap-6 items-start">
+                  <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
+                    <MapPin className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold uppercase tracking-widest text-sm mb-2">Adres</h3>
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                      {settings.address}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {settings?.phone && (
+                <div className="flex gap-6 items-start">
+                  <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
+                    <Phone className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold uppercase tracking-widest text-sm mb-2">Telefon</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {settings.phone}
+                    </p>
+                  </div>
+                </div>
+              )}
 
-          <div className="flex gap-6 items-start">
-            <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
-              <Mail className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold uppercase tracking-widest text-sm mb-2">E-Posta</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                info@skyrichbattery.com.tr<br />
-                destek@skyrichbattery.com.tr
-              </p>
-            </div>
-          </div>
+              {settings?.email && (
+                <div className="flex gap-6 items-start">
+                  <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
+                    <Mail className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold uppercase tracking-widest text-sm mb-2">E-Posta</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {settings.email}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {settings?.whatsapp && (
+                <div className="flex gap-6 items-start">
+                  <div className="bg-primary/10 p-4 rounded-none border border-primary/20">
+                    <MessageCircle className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold uppercase tracking-widest text-sm mb-2">WhatsApp</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {settings.whatsapp}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* Contact Form */}

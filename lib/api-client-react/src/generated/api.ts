@@ -30,12 +30,18 @@ import type {
   FinderResult,
   GetVehicleModelsParams,
   HealthStatus,
+  HeroSettings,
+  HeroSettingsUpdate,
   ListBannersParams,
   ListBatteriesParams,
   ListPopupsParams,
+  PageContent,
+  PageContentUpdate,
   Popup,
   PopupInput,
   PopupUpdate,
+  SiteSettings,
+  SiteSettingsUpdate,
   VehicleCompatibility,
   VehicleCompatibilityInput,
 } from "./api.schemas";
@@ -1262,6 +1268,577 @@ export const useDeletePopup = <
   TContext
 > => {
   return useMutation(getDeletePopupMutationOptions(options));
+};
+
+/**
+ * @summary Get site settings
+ */
+export const getGetSiteSettingsUrl = () => {
+  return `/api/site-settings`;
+};
+
+export const getSiteSettings = async (
+  options?: RequestInit,
+): Promise<SiteSettings> => {
+  return customFetch<SiteSettings>(getGetSiteSettingsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSiteSettingsQueryKey = () => {
+  return [`/api/site-settings`] as const;
+};
+
+export const getGetSiteSettingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSiteSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSiteSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSiteSettingsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSiteSettings>>> = ({
+    signal,
+  }) => getSiteSettings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSiteSettings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSiteSettingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSiteSettings>>
+>;
+export type GetSiteSettingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get site settings
+ */
+
+export function useGetSiteSettings<
+  TData = Awaited<ReturnType<typeof getSiteSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSiteSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSiteSettingsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update site settings
+ */
+export const getUpdateSiteSettingsUrl = () => {
+  return `/api/site-settings`;
+};
+
+export const updateSiteSettings = async (
+  siteSettingsUpdate: SiteSettingsUpdate,
+  options?: RequestInit,
+): Promise<SiteSettings> => {
+  return customFetch<SiteSettings>(getUpdateSiteSettingsUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(siteSettingsUpdate),
+  });
+};
+
+export const getUpdateSiteSettingsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSiteSettings>>,
+    TError,
+    { data: BodyType<SiteSettingsUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateSiteSettings>>,
+  TError,
+  { data: BodyType<SiteSettingsUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateSiteSettings"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateSiteSettings>>,
+    { data: BodyType<SiteSettingsUpdate> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateSiteSettings(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateSiteSettingsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSiteSettings>>
+>;
+export type UpdateSiteSettingsMutationBody = BodyType<SiteSettingsUpdate>;
+export type UpdateSiteSettingsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update site settings
+ */
+export const useUpdateSiteSettings = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSiteSettings>>,
+    TError,
+    { data: BodyType<SiteSettingsUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateSiteSettings>>,
+  TError,
+  { data: BodyType<SiteSettingsUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateSiteSettingsMutationOptions(options));
+};
+
+/**
+ * @summary Get hero settings
+ */
+export const getGetHeroSettingsUrl = () => {
+  return `/api/hero-settings`;
+};
+
+export const getHeroSettings = async (
+  options?: RequestInit,
+): Promise<HeroSettings> => {
+  return customFetch<HeroSettings>(getGetHeroSettingsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetHeroSettingsQueryKey = () => {
+  return [`/api/hero-settings`] as const;
+};
+
+export const getGetHeroSettingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getHeroSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getHeroSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetHeroSettingsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getHeroSettings>>> = ({
+    signal,
+  }) => getHeroSettings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getHeroSettings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetHeroSettingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getHeroSettings>>
+>;
+export type GetHeroSettingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get hero settings
+ */
+
+export function useGetHeroSettings<
+  TData = Awaited<ReturnType<typeof getHeroSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getHeroSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetHeroSettingsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update hero settings
+ */
+export const getUpdateHeroSettingsUrl = () => {
+  return `/api/hero-settings`;
+};
+
+export const updateHeroSettings = async (
+  heroSettingsUpdate: HeroSettingsUpdate,
+  options?: RequestInit,
+): Promise<HeroSettings> => {
+  return customFetch<HeroSettings>(getUpdateHeroSettingsUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(heroSettingsUpdate),
+  });
+};
+
+export const getUpdateHeroSettingsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateHeroSettings>>,
+    TError,
+    { data: BodyType<HeroSettingsUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateHeroSettings>>,
+  TError,
+  { data: BodyType<HeroSettingsUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateHeroSettings"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateHeroSettings>>,
+    { data: BodyType<HeroSettingsUpdate> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateHeroSettings(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateHeroSettingsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateHeroSettings>>
+>;
+export type UpdateHeroSettingsMutationBody = BodyType<HeroSettingsUpdate>;
+export type UpdateHeroSettingsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update hero settings
+ */
+export const useUpdateHeroSettings = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateHeroSettings>>,
+    TError,
+    { data: BodyType<HeroSettingsUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateHeroSettings>>,
+  TError,
+  { data: BodyType<HeroSettingsUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateHeroSettingsMutationOptions(options));
+};
+
+/**
+ * @summary List all page contents
+ */
+export const getListPageContentsUrl = () => {
+  return `/api/page-contents`;
+};
+
+export const listPageContents = async (
+  options?: RequestInit,
+): Promise<PageContent[]> => {
+  return customFetch<PageContent[]>(getListPageContentsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListPageContentsQueryKey = () => {
+  return [`/api/page-contents`] as const;
+};
+
+export const getListPageContentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPageContents>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listPageContents>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListPageContentsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPageContents>>
+  > = ({ signal }) => listPageContents({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPageContents>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPageContentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPageContents>>
+>;
+export type ListPageContentsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all page contents
+ */
+
+export function useListPageContents<
+  TData = Awaited<ReturnType<typeof listPageContents>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listPageContents>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPageContentsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get page content by key
+ */
+export const getGetPageContentUrl = (key: string) => {
+  return `/api/page-contents/${key}`;
+};
+
+export const getPageContent = async (
+  key: string,
+  options?: RequestInit,
+): Promise<PageContent> => {
+  return customFetch<PageContent>(getGetPageContentUrl(key), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPageContentQueryKey = (key: string) => {
+  return [`/api/page-contents/${key}`] as const;
+};
+
+export const getGetPageContentQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPageContent>>,
+  TError = ErrorType<unknown>,
+>(
+  key: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPageContent>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPageContentQueryKey(key);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPageContent>>> = ({
+    signal,
+  }) => getPageContent(key, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!key,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPageContent>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetPageContentQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPageContent>>
+>;
+export type GetPageContentQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get page content by key
+ */
+
+export function useGetPageContent<
+  TData = Awaited<ReturnType<typeof getPageContent>>,
+  TError = ErrorType<unknown>,
+>(
+  key: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPageContent>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetPageContentQueryOptions(key, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update page content by key
+ */
+export const getUpdatePageContentUrl = (key: string) => {
+  return `/api/page-contents/${key}`;
+};
+
+export const updatePageContent = async (
+  key: string,
+  pageContentUpdate: PageContentUpdate,
+  options?: RequestInit,
+): Promise<PageContent> => {
+  return customFetch<PageContent>(getUpdatePageContentUrl(key), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(pageContentUpdate),
+  });
+};
+
+export const getUpdatePageContentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePageContent>>,
+    TError,
+    { key: string; data: BodyType<PageContentUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePageContent>>,
+  TError,
+  { key: string; data: BodyType<PageContentUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updatePageContent"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePageContent>>,
+    { key: string; data: BodyType<PageContentUpdate> }
+  > = (props) => {
+    const { key, data } = props ?? {};
+
+    return updatePageContent(key, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdatePageContentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePageContent>>
+>;
+export type UpdatePageContentMutationBody = BodyType<PageContentUpdate>;
+export type UpdatePageContentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update page content by key
+ */
+export const useUpdatePageContent = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePageContent>>,
+    TError,
+    { key: string; data: BodyType<PageContentUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updatePageContent>>,
+  TError,
+  { key: string; data: BodyType<PageContentUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdatePageContentMutationOptions(options));
 };
 
 /**

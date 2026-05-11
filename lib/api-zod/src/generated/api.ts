@@ -231,8 +231,10 @@ export const ListPopupsResponseItem = zod.object({
   buttonText: zod.string().nullish(),
   buttonUrl: zod.string().nullish(),
   active: zod.boolean(),
-  showOnce: zod.boolean().optional(),
+  frequency: zod.enum(["always", "once-per-session", "disabled"]).optional(),
   delaySeconds: zod.number().optional(),
+  startDate: zod.string().nullish(),
+  endDate: zod.string().nullish(),
   createdAt: zod.string(),
 });
 export const ListPopupsResponse = zod.array(ListPopupsResponseItem);
@@ -247,8 +249,10 @@ export const CreatePopupBody = zod.object({
   buttonText: zod.string().optional(),
   buttonUrl: zod.string().optional(),
   active: zod.boolean().optional(),
-  showOnce: zod.boolean().optional(),
+  frequency: zod.enum(["always", "once-per-session", "disabled"]).optional(),
   delaySeconds: zod.number().optional(),
+  startDate: zod.string().optional(),
+  endDate: zod.string().optional(),
 });
 
 /**
@@ -265,8 +269,10 @@ export const UpdatePopupBody = zod.object({
   buttonText: zod.string().optional(),
   buttonUrl: zod.string().optional(),
   active: zod.boolean().optional(),
-  showOnce: zod.boolean().optional(),
+  frequency: zod.enum(["always", "once-per-session", "disabled"]).optional(),
   delaySeconds: zod.number().optional(),
+  startDate: zod.string().optional(),
+  endDate: zod.string().optional(),
 });
 
 export const UpdatePopupResponse = zod.object({
@@ -277,8 +283,10 @@ export const UpdatePopupResponse = zod.object({
   buttonText: zod.string().nullish(),
   buttonUrl: zod.string().nullish(),
   active: zod.boolean(),
-  showOnce: zod.boolean().optional(),
+  frequency: zod.enum(["always", "once-per-session", "disabled"]).optional(),
   delaySeconds: zod.number().optional(),
+  startDate: zod.string().nullish(),
+  endDate: zod.string().nullish(),
   createdAt: zod.string(),
 });
 
@@ -287,6 +295,139 @@ export const UpdatePopupResponse = zod.object({
  */
 export const DeletePopupParams = zod.object({
   id: zod.coerce.number(),
+});
+
+/**
+ * @summary Get site settings
+ */
+export const GetSiteSettingsResponse = zod.object({
+  id: zod.number(),
+  whatsapp: zod.string().nullish(),
+  phone: zod.string().nullish(),
+  email: zod.string().nullish(),
+  address: zod.string().nullish(),
+  instagram: zod.string().nullish(),
+  facebook: zod.string().nullish(),
+  seoTitle: zod.string().nullish(),
+  seoDescription: zod.string().nullish(),
+  footerDescription: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Update site settings
+ */
+export const UpdateSiteSettingsBody = zod.object({
+  whatsapp: zod.string().optional(),
+  phone: zod.string().optional(),
+  email: zod.string().optional(),
+  address: zod.string().optional(),
+  instagram: zod.string().optional(),
+  facebook: zod.string().optional(),
+  seoTitle: zod.string().optional(),
+  seoDescription: zod.string().optional(),
+  footerDescription: zod.string().optional(),
+});
+
+export const UpdateSiteSettingsResponse = zod.object({
+  id: zod.number(),
+  whatsapp: zod.string().nullish(),
+  phone: zod.string().nullish(),
+  email: zod.string().nullish(),
+  address: zod.string().nullish(),
+  instagram: zod.string().nullish(),
+  facebook: zod.string().nullish(),
+  seoTitle: zod.string().nullish(),
+  seoDescription: zod.string().nullish(),
+  footerDescription: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Get hero settings
+ */
+export const GetHeroSettingsResponse = zod.object({
+  id: zod.number(),
+  title: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  cta1Text: zod.string().nullish(),
+  cta1Link: zod.string().nullish(),
+  cta2Text: zod.string().nullish(),
+  cta2Link: zod.string().nullish(),
+  bgImageUrl: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Update hero settings
+ */
+export const UpdateHeroSettingsBody = zod.object({
+  title: zod.string().optional(),
+  subtitle: zod.string().optional(),
+  cta1Text: zod.string().optional(),
+  cta1Link: zod.string().optional(),
+  cta2Text: zod.string().optional(),
+  cta2Link: zod.string().optional(),
+  bgImageUrl: zod.string().optional(),
+});
+
+export const UpdateHeroSettingsResponse = zod.object({
+  id: zod.number(),
+  title: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  cta1Text: zod.string().nullish(),
+  cta1Link: zod.string().nullish(),
+  cta2Text: zod.string().nullish(),
+  cta2Link: zod.string().nullish(),
+  bgImageUrl: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary List all page contents
+ */
+export const ListPageContentsResponseItem = zod.object({
+  id: zod.number(),
+  key: zod.string(),
+  title: zod.string().nullish(),
+  content: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+export const ListPageContentsResponse = zod.array(ListPageContentsResponseItem);
+
+/**
+ * @summary Get page content by key
+ */
+export const GetPageContentParams = zod.object({
+  key: zod.coerce.string(),
+});
+
+export const GetPageContentResponse = zod.object({
+  id: zod.number(),
+  key: zod.string(),
+  title: zod.string().nullish(),
+  content: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Update page content by key
+ */
+export const UpdatePageContentParams = zod.object({
+  key: zod.coerce.string(),
+});
+
+export const UpdatePageContentBody = zod.object({
+  title: zod.string().optional(),
+  content: zod.string().optional(),
+});
+
+export const UpdatePageContentResponse = zod.object({
+  id: zod.number(),
+  key: zod.string(),
+  title: zod.string().nullish(),
+  content: zod.string().nullish(),
+  updatedAt: zod.string(),
 });
 
 /**
