@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, popupsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { CreatePopupBody, UpdatePopupBody, ListPopupsQueryParams } from "@workspace/api-zod";
+import requireAdminAuth from "../middleware/require-admin-auth";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get("/popups", async (req, res) => {
   }
 });
 
-router.post("/popups", async (req, res) => {
+router.post("/popups", requireAdminAuth, async (req, res) => {
   try {
     const body = CreatePopupBody.safeParse(req.body);
     if (!body.success) {
@@ -36,7 +37,7 @@ router.post("/popups", async (req, res) => {
   }
 });
 
-router.patch("/popups/:id", async (req, res) => {
+router.patch("/popups/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
@@ -60,7 +61,7 @@ router.patch("/popups/:id", async (req, res) => {
   }
 });
 
-router.delete("/popups/:id", async (req, res) => {
+router.delete("/popups/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

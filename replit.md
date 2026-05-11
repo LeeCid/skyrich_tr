@@ -37,7 +37,7 @@ Türkiye resmi distribütörü Skyrich Battery için Türkçe kurumsal web sites
 - **Ürün Detayı (/urunler/:id)**: Teknik specs tablosu
 - **Hakkımızda (/hakkimizda)**: Marka ve Türk distribütör bilgisi
 - **İletişim (/iletisim)**: İletişim formu
-- **Admin (/admin)**: Şifre korumalı giriş (şifre: skyrich2025)
+- **Admin (/admin)**: Şifre korumalı giriş
 - **Admin Panel (/admin/panel)**: Akü/banner/popup tam CRUD yönetimi
 
 ## Akü Modelleri (12 adet)
@@ -48,7 +48,7 @@ HJTX20HQ-FP, HJTZ7S-FPZ, HJTX20CH-FP, HJ13L-FPZ, HJT9B-FP, HJT7B-FPZ
 ## Architecture decisions
 
 - OpenAPI-first: Tüm API endpoint'leri lib/api-spec/openapi.yaml'da tanımlanır, codegen ile hook ve şemalar üretilir
-- Admin auth: localStorage'da token tutulur; şifre backend ortam değişkeni ADMIN_PASSWORD ile belirlenir (varsayılan: skyrich2025)
+- Admin auth: localStorage'da token tutulur; şifre ve API token backend ortam değişkenleri (ADMIN_PASSWORD, ADMIN_API_TOKEN) ile belirlenir
 - Frontend tamamen Türkçe, admin paneli de Türkçe
 - Popups: showOnce mantığı localStorage ile yönetilir, delaySeconds sonra gösterilir
 - Banners: API'dan çekilir, ana sayfada carousel olarak gösterilir
@@ -59,7 +59,7 @@ HJTX20HQ-FP, HJTZ7S-FPZ, HJTX20CH-FP, HJ13L-FPZ, HJT9B-FP, HJT7B-FPZ
 - Sadece faturadaki 12 akü model kodu ürünlerde gösterilecek
 - Admin panelden: akü, banner ve popup yönetimi yapılabilmeli
 - İleride: yeni akü modeli ve görsel ekleme admin panelden yapılacak
-- Admin şifresi: skyrich2025
+- Admin şifresi ve API token ortam değişkenleriyle yapılandırılmalıdır
 
 ## Gotchas
 

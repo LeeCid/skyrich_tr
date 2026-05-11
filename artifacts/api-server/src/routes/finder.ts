@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, vehicleCompatibilityTable, batteriesTable } from "@workspace/db";
 import { eq, and, lte, gte, ilike } from "drizzle-orm";
 import { CreateVehicleCompatibilityBody, GetVehicleModelsQueryParams } from "@workspace/api-zod";
+import requireAdminAuth from "../middleware/require-admin-auth";
 
 const router = Router();
 
@@ -88,7 +89,7 @@ router.get("/vehicle-compatibility", async (req, res) => {
   }
 });
 
-router.post("/vehicle-compatibility", async (req, res) => {
+router.post("/vehicle-compatibility", requireAdminAuth, async (req, res) => {
   try {
     const body = CreateVehicleCompatibilityBody.safeParse(req.body);
     if (!body.success) {
@@ -103,7 +104,7 @@ router.post("/vehicle-compatibility", async (req, res) => {
   }
 });
 
-router.delete("/vehicle-compatibility/:id", async (req, res) => {
+router.delete("/vehicle-compatibility/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

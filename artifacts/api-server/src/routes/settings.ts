@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, siteSettingsTable, heroSettingsTable, pageContentsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import requireAdminAuth from "../middleware/require-admin-auth";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get("/site-settings", async (req, res) => {
   }
 });
 
-router.put("/site-settings", async (req, res) => {
+router.put("/site-settings", requireAdminAuth, async (req, res) => {
   try {
     const existing = await db.select().from(siteSettingsTable).limit(1);
     if (existing.length === 0) {
@@ -58,7 +59,7 @@ router.get("/hero-settings", async (req, res) => {
   }
 });
 
-router.put("/hero-settings", async (req, res) => {
+router.put("/hero-settings", requireAdminAuth, async (req, res) => {
   try {
     const existing = await db.select().from(heroSettingsTable).limit(1);
     if (existing.length === 0) {
@@ -104,7 +105,7 @@ router.get("/page-contents/:key", async (req, res) => {
   }
 });
 
-router.put("/page-contents/:key", async (req, res) => {
+router.put("/page-contents/:key", requireAdminAuth, async (req, res) => {
   try {
     const key = req.params.key;
     const existing = await db.select().from(pageContentsTable).where(eq(pageContentsTable.key, key));

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, bannersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { CreateBannerBody, UpdateBannerBody, ListBannersQueryParams } from "@workspace/api-zod";
+import requireAdminAuth from "../middleware/require-admin-auth";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get("/banners", async (req, res) => {
   }
 });
 
-router.post("/banners", async (req, res) => {
+router.post("/banners", requireAdminAuth, async (req, res) => {
   try {
     const body = CreateBannerBody.safeParse(req.body);
     if (!body.success) {
@@ -36,7 +37,7 @@ router.post("/banners", async (req, res) => {
   }
 });
 
-router.patch("/banners/:id", async (req, res) => {
+router.patch("/banners/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
@@ -60,7 +61,7 @@ router.patch("/banners/:id", async (req, res) => {
   }
 });
 
-router.delete("/banners/:id", async (req, res) => {
+router.delete("/banners/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

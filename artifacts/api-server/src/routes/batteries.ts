@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, batteriesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { CreateBatteryBody, UpdateBatteryBody, ListBatteriesQueryParams } from "@workspace/api-zod";
+import requireAdminAuth from "../middleware/require-admin-auth";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.get("/batteries", async (req, res) => {
   }
 });
 
-router.post("/batteries", async (req, res) => {
+router.post("/batteries", requireAdminAuth, async (req, res) => {
   try {
     const body = CreateBatteryBody.safeParse(req.body);
     if (!body.success) {
@@ -58,7 +59,7 @@ router.get("/batteries/:id", async (req, res) => {
   }
 });
 
-router.patch("/batteries/:id", async (req, res) => {
+router.patch("/batteries/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
@@ -82,7 +83,7 @@ router.patch("/batteries/:id", async (req, res) => {
   }
 });
 
-router.delete("/batteries/:id", async (req, res) => {
+router.delete("/batteries/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

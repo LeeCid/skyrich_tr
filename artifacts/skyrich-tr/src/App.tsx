@@ -14,7 +14,28 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    mutations: {
+      onError: (error: any) => {
+        if (error?.status === 401) {
+          localStorage.removeItem("admin_token");
+          window.location.href = "/admin";
+        }
+      },
+    },
+    queries: {
+      retry: (failureCount: number, error: any) => {
+        if (error?.status === 401) {
+          localStorage.removeItem("admin_token");
+          window.location.href = "/admin";
+          return false;
+        }
+        return failureCount < 3;
+      },
+    },
+  },
+});
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,6 +46,15 @@ function Layout({ children }: { children: React.ReactNode }) {
       </main>
       <Footer />
     </div>
+  );
+}
+
+function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <meta name="robots" content="noindex, nofollow" />
+      {children}
+    </>
   );
 }
 
@@ -49,11 +79,15 @@ function Router() {
       <Route path="/iletisim">
         <Layout><Contact /></Layout>
       </Route>
-      
+
       {/* Admin routes without standard Layout */}
-      <Route path="/admin" component={AdminLogin} />
-      <Route path="/admin/panel" component={AdminPanel} />
-      
+      <Route path="/admin">
+        <AdminLayout><AdminLogin /></AdminLayout>
+      </Route>
+      <Route path="/admin/panel">
+        <AdminLayout><AdminPanel /></AdminLayout>
+      </Route>
+
       <Route>
         <Layout><NotFound /></Layout>
       </Route>

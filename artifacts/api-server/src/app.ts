@@ -6,6 +6,34 @@ import { logger } from "./lib/logger";
 
 const app: Express = express();
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
+const allowedOrigins = new Set<string>([
+  "https://www.skyrichbattery.com.tr",
+  "https://skyrichbattery.com.tr",
+]);
+
+if (process.env.FRONTEND_ORIGIN) {
+  allowedOrigins.add(process.env.FRONTEND_ORIGIN);
+}
+
+if (isDevelopment) {
+  allowedOrigins.add("http://localhost:3000");
+  allowedOrigins.add("http://localhost:5173");
+  allowedOrigins.add("http://localhost:8080");
+}
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  credentials: true,
+};
+
 app.use(
   pinoHttp({
     logger,
@@ -25,7 +53,7 @@ app.use(
     },
   }),
 );
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
