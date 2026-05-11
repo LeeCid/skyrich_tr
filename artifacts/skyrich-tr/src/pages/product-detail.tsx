@@ -1,4 +1,5 @@
 import { useParams, Link } from "wouter";
+import { useEffect } from "react";
 import { useGetBattery, getGetBatteryQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, AlertCircle, MessageCircle, Phone } from "lucide-react";
@@ -14,6 +15,26 @@ export default function ProductDetail() {
       enabled: !!id 
     } 
   });
+
+  useEffect(() => {
+    if (!battery) return;
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: battery.name,
+      image: battery.imageUrl ? `https://www.skyrichbattery.com.tr${battery.imageUrl}` : undefined,
+      description: battery.description || `${battery.name} — Skyrich lityum akü`,
+      brand: {
+        "@type": "Brand",
+        name: "Skyrich"
+      },
+      sku: battery.modelCode,
+    });
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, [battery]);
 
   if (isLoading) {
     return (

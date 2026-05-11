@@ -119,4 +119,43 @@ router.delete("/batteries/:id", requireAdminAuth, async (req, res) => {
   }
 });
 
+router.get("/sitemap.xml", async (req, res) => {
+  try {
+    const batteries = await db.select().from(batteriesTable).orderBy(batteriesTable.sortOrder, batteriesTable.id);
+    const approvedBatteries = batteries.filter(b => isPublicApproved(b));
+
+    const baseUrl = "https://www.skyrichbattery.com.tr";
+    const staticUrls = [
+      { loc: `${baseUrl}/`, changefreq: "weekly", priority: "1.0" },
+      { loc: `${baseUrl}/urunler`, changefreq: "weekly", priority: "0.8" },
+      { loc: `${baseUrl}/aku-bulucu`, changefreq: "monthly", priority: "0.6" },
+      { loc: `${baseUrl}/hakkimizda`, changefreq: "monthly", priority: "0.5" },
+      { loc: `${baseUrl}/iletisim`, changefreq: "monthly", priority: "0.5" },
+    ];
+
+    const productUrls = approvedBatteries.map(b => ({
+      loc: `${baseUrl}/urunler/${b.id}`,
+      changefreq: "weekly",
+      priority: "0.7",
+    }));
+
+    const allUrls = [...staticUrls, ...productUrls];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join("\n")}
+</urlset>`;
+
+    res.setHeader("Content-Type", "application/xml");
+    res.send(xml);
+  } catch (err) {
+    req.log.error({ err }, "Failed to generate sitemap");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;

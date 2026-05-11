@@ -22,6 +22,21 @@ export default function Home() {
   const [activePopup, setActivePopup] = useState<any>(null);
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Skyrich Battery Türkiye",
+      url: "https://www.skyrichbattery.com.tr",
+      logo: "https://www.skyrichbattery.com.tr/favicon.svg",
+      description: "Skyrich lityum akülerinin Türkiye distribütörü.",
+    });
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, []);
+
+  useEffect(() => {
     if (!popups || popups.length === 0) return;
 
     const popup = popups[0];
