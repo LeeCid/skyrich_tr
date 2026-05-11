@@ -127,7 +127,7 @@ router.post("/vehicle-compatibility", requireAdminAuth, async (req, res) => {
 
 router.delete("/vehicle-compatibility/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;

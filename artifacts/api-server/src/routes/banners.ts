@@ -39,7 +39,7 @@ router.post("/banners", requireAdminAuth, async (req, res) => {
 
 router.patch("/banners/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;
@@ -63,7 +63,7 @@ router.patch("/banners/:id", requireAdminAuth, async (req, res) => {
 
 router.delete("/banners/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;

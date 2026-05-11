@@ -63,7 +63,7 @@ router.post("/batteries", requireAdminAuth, async (req, res) => {
 
 router.get("/batteries/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;
@@ -82,7 +82,7 @@ router.get("/batteries/:id", async (req, res) => {
 
 router.patch("/batteries/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;
@@ -106,7 +106,7 @@ router.patch("/batteries/:id", requireAdminAuth, async (req, res) => {
 
 router.delete("/batteries/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;

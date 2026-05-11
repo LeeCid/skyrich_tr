@@ -93,7 +93,8 @@ router.get("/page-contents", async (req, res) => {
 
 router.get("/page-contents/:key", async (req, res) => {
   try {
-    const [row] = await db.select().from(pageContentsTable).where(eq(pageContentsTable.key, req.params.key));
+    const key = req.params.key as string;
+    const [row] = await db.select().from(pageContentsTable).where(eq(pageContentsTable.key, key));
     if (!row) {
       res.status(404).json({ error: "Page content not found" });
       return;
@@ -107,7 +108,7 @@ router.get("/page-contents/:key", async (req, res) => {
 
 router.put("/page-contents/:key", requireAdminAuth, async (req, res) => {
   try {
-    const key = req.params.key;
+    const key = req.params.key as string;
     const existing = await db.select().from(pageContentsTable).where(eq(pageContentsTable.key, key));
     if (existing.length === 0) {
       const [row] = await db.insert(pageContentsTable).values({ key, ...req.body, updatedAt: new Date() }).returning();

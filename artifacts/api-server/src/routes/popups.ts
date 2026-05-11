@@ -39,7 +39,7 @@ router.post("/popups", requireAdminAuth, async (req, res) => {
 
 router.patch("/popups/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;
@@ -63,7 +63,7 @@ router.patch("/popups/:id", requireAdminAuth, async (req, res) => {
 
 router.delete("/popups/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       res.status(400).json({ error: "Invalid ID" });
       return;
