@@ -10,15 +10,21 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-// Runtime logging
+// Parse allowed origins for logging
+const frontendOriginEnv = process.env.FRONTEND_ORIGIN ?? "";
+const allowedOrigins = frontendOriginEnv
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+// Safe startup logging (no secrets)
 logger.info({
   port,
   host,
   NODE_ENV: process.env.NODE_ENV ?? "development",
   hasDatabaseUrl: !!process.env.DATABASE_URL,
-  hasAdminPassword: !!process.env.ADMIN_PASSWORD,
-  hasAdminApiToken: !!process.env.ADMIN_API_TOKEN,
-  frontendOrigin: process.env.FRONTEND_ORIGIN ?? "not set",
+  allowedOriginsCount: allowedOrigins.length,
+  allowedOrigins: allowedOrigins,
 }, "API server starting");
 
 app.listen(port, host, (err) => {

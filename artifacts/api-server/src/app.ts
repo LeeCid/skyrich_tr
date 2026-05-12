@@ -13,8 +13,16 @@ const allowedOrigins = new Set<string>([
   "https://skyrichbattery.com.tr",
 ]);
 
+// Support comma-separated multiple origins from FRONTEND_ORIGIN
 if (process.env.FRONTEND_ORIGIN) {
-  allowedOrigins.add(process.env.FRONTEND_ORIGIN);
+  const origins = process.env.FRONTEND_ORIGIN
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  
+  for (const origin of origins) {
+    allowedOrigins.add(origin);
+  }
 }
 
 if (isDevelopment) {
