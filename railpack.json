@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "node",
+  "steps": {
+    "install": {
+      "commands": [
+        "pnpm install --no-frozen-lockfile --prefer-offline"
+      ]
+    },
+    "build": {
+      "inputs": [
+        {
+          "step": "install"
+        }
+      ],
+      "commands": [
+        "pnpm --filter @workspace/api-server run build"
+      ]
+    }
+  },
+  "deploy": {
+    "startCommand": "pnpm --filter @workspace/api-server run start"
+  }
+}
