@@ -606,10 +606,24 @@ export const listBanners = async (
   params?: ListBannersParams,
   options?: RequestInit,
 ): Promise<Banner[]> => {
-  return customFetch<Banner[]>(getListBannersUrl(params), {
+  const response = await customFetch<unknown>(getListBannersUrl(params), {
     ...options,
     method: "GET",
   });
+  
+  // Normalize response to handle various API response shapes
+  if (Array.isArray(response)) return response as Banner[];
+  
+  if (response && typeof response === "object") {
+    const obj = response as Record<string, unknown>;
+    if (Array.isArray(obj.value)) return obj.value as Banner[];
+    if (Array.isArray(obj.data)) return obj.data as Banner[];
+    if (Array.isArray(obj.items)) return obj.items as Banner[];
+    if (Array.isArray(obj.results)) return obj.results as Banner[];
+    if (Array.isArray(obj.banners)) return obj.banners as Banner[];
+  }
+  
+  return [];
 };
 
 export const getListBannersQueryKey = (params?: ListBannersParams) => {
@@ -957,10 +971,24 @@ export const listPopups = async (
   params?: ListPopupsParams,
   options?: RequestInit,
 ): Promise<Popup[]> => {
-  return customFetch<Popup[]>(getListPopupsUrl(params), {
+  const response = await customFetch<unknown>(getListPopupsUrl(params), {
     ...options,
     method: "GET",
   });
+  
+  // Normalize response to handle various API response shapes
+  if (Array.isArray(response)) return response as Popup[];
+  
+  if (response && typeof response === "object") {
+    const obj = response as Record<string, unknown>;
+    if (Array.isArray(obj.value)) return obj.value as Popup[];
+    if (Array.isArray(obj.data)) return obj.data as Popup[];
+    if (Array.isArray(obj.items)) return obj.items as Popup[];
+    if (Array.isArray(obj.results)) return obj.results as Popup[];
+    if (Array.isArray(obj.popups)) return obj.popups as Popup[];
+  }
+  
+  return [];
 };
 
 export const getListPopupsQueryKey = (params?: ListPopupsParams) => {

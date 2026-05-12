@@ -28,6 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
           <div className="text-center p-8 max-w-md">
             <h1 className="text-2xl font-bold mb-4">Beklenmeyen bir hata oluştu.</h1>
+            <p className="text-muted-foreground mb-2">Teknik ekip bilgilendirildi. Lütfen sayfayı yenileyin.</p>
             <p className="text-muted-foreground mb-6">Sayfayı yenileyin veya bizimle iletişime geçin.</p>
             <button
               onClick={() => window.location.reload()}

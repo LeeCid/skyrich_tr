@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeft, ArrowRight, Info, MessageCircle, Zap, CheckCircle, ExternalLink, Search, AlertCircle } from "lucide-react";
 import { technologyLabel, productTypeLabel, formatSpec, sourceStatusLabel, confidenceLabel } from "@/lib/display-labels";
 import { ProductImageStage } from "@/components/products/product-image-stage";
+import { normalizeStringArray } from "@/lib/api-normalizers";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -27,6 +28,10 @@ export default function ProductDetail() {
       enabled: !!id 
     } 
   });
+
+  // Ensure array fields are normalized
+  const crossRefCodes = battery ? normalizeStringArray(battery.crossReferenceCodes) : [];
+  const vehicleHints = battery && Array.isArray(battery.vehicleHints) ? battery.vehicleHints : [];
 
   const getSourceBadge = (status: string | null | undefined) => {
     const label = sourceStatusLabel(status);
@@ -166,13 +171,13 @@ export default function ProductDetail() {
           )}
 
           {/* Cross-Reference Codes */}
-          {battery.crossReferenceCodes && battery.crossReferenceCodes.length > 0 && (
+          {crossRefCodes.length > 0 && (
             <div className={!prefersReducedMotion ? 'reveal-up' : ''} style={{ animationDelay: '300ms' }}>
               <h3 className="text-xs font-bold uppercase mb-3 tracking-widest text-text-muted flex items-center gap-2">
                 <Info size={14} /> Karşılık Kodları
               </h3>
               <div className="flex flex-wrap gap-2">
-                {battery.crossReferenceCodes?.map((code: string, idx: number) => (
+                {crossRefCodes.map((code, idx: number) => (
                   <Badge key={idx} variant="outline" className={`font-mono text-xs px-2.5 py-1 border-border bg-background/50 ${!prefersReducedMotion ? 'reveal-up' : ''}`} style={{ animationDelay: `${300 + idx * 50}ms` }}>
                     {code}
                   </Badge>
@@ -290,7 +295,7 @@ export default function ProductDetail() {
                 </tr>
               </thead>
               <tbody>
-                {battery.vehicleHints.map((hint: any, idx: number) => (
+                {vehicleHints.map((hint: any, idx: number) => (
                   <tr key={idx} className="border-b border-border last:border-0 hover:bg-tonal-panel/50 transition-colors">
                     <td className="px-5 py-4">{hint.make}</td>
                     <td className="px-5 py-4">{hint.model}</td>

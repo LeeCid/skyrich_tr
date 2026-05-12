@@ -10,6 +10,7 @@ import { Battery as BatteryIcon, Zap, Search, ArrowRight, MessageCircle, Wrench,
 import { useSearchBatteryCode, getSearchBatteryCodeQueryKey } from "@workspace/api-client-react";
 import { useGetSiteSettings, getGetSiteSettingsQueryKey, useListBatteries, getListBatteriesQueryKey } from "@workspace/api-client-react";
 import { technologyLabel, sourceStatusLabel } from "@/lib/display-labels";
+import { asArray } from "@/lib/api-normalizers";
 
 export default function BatteryFinder() {
   const [tab, setTab] = useState<"code" | "vehicle" | "support">("code");
@@ -36,8 +37,9 @@ export default function BatteryFinder() {
     { query: { enabled: false } }
   );
 
-  // Ensure batteries is an array
+  // Ensure API responses are arrays
   const batteryList = Array.isArray(batteries) ? batteries : [];
+  const codeResultsList = asArray(codeResults);
 
   // Filter batteries with vehicle hints matching the search
   const vehicleHintsResults = batteryList.filter((b: any) => 
@@ -154,14 +156,14 @@ Motor: ${engine || "-"}`;
                     <div key={i} className="h-96 bg-tonal-panel animate-pulse border border-border rounded-none" />
                   ))}
                 </div>
-              ) : codeResults && codeResults.length > 0 ? (
+              ) : codeResultsList.length > 0 ? (
                 <div className="space-y-8">
                   <div className="flex items-center gap-4">
                     <span className="section-eyebrow mb-0">Önerilen Eşleşme</span>
                     <div className="flex-1 h-px bg-border" />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    {codeResults.map((result: any, idx: number) => (
+                    {codeResultsList.map((result: any, idx: number) => (
                       <Card key={result.battery.id} className={`group industrial-panel border-metallic premium-card-hover rounded-none overflow-hidden flex flex-col ${!prefersReducedMotion ? 'reveal-up' : ''}`} style={{ animationDelay: `${300 + idx * 50}ms` }}>
                         <CardContent className="p-0 flex-1 flex flex-col">
                           <div className="p-8 flex flex-col flex-1 space-y-6">

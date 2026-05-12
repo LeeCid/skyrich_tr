@@ -14,6 +14,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ProductCard } from "@/components/products/product-card";
 import { ProductImageStage } from "@/components/products/product-image-stage";
 import { hasVerifiedImage } from "@/lib/product-image-resolver";
+import { asArray } from "@/lib/api-normalizers";
 
 export default function Home() {
   const { data: banners } = useListBanners({ active: true }, { query: { queryKey: getListBannersQueryKey({ active: true }) } });
@@ -21,8 +22,10 @@ export default function Home() {
   const { data: popups } = useListPopups({ active: true }, { query: { queryKey: getListPopupsQueryKey({ active: true }) } });
   const { data: hero } = useGetHeroSettings({ query: { queryKey: getGetHeroSettingsQueryKey() } });
 
-  // Ensure featuredBatteries is an array
+  // Ensure API responses are arrays
+  const bannerList = Array.isArray(banners) ? banners : [];
   const batteryList = Array.isArray(featuredBatteries) ? featuredBatteries : [];
+  const popupList = Array.isArray(popups) ? popups : [];
 
   // Filter featured batteries to only include clean, high-confidence SKUs
   const safeFeaturedBatteries = batteryList.filter(b => 
@@ -72,9 +75,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!popups || popups.length === 0) return;
+    if (!popupList || popupList.length === 0) return;
 
-    const popup = popups[0];
+    const popup = popupList[0];
     const now = new Date();
 
     if (popup.startDate && new Date(popup.startDate) > now) return;
@@ -107,10 +110,10 @@ export default function Home() {
     <div className="flex flex-col w-full">
       {/* Hero Carousel */}
       <section className="relative w-full h-[700px] md:h-[850px] bg-background overflow-hidden border-b border-border">
-        {banners && banners.length > 0 ? (
+        {bannerList && bannerList.length > 0 ? (
           <div className="overflow-hidden h-full" ref={emblaRef}>
             <div className="flex h-full">
-              {banners.map((banner, idx) => (
+              {bannerList.map((banner, idx) => (
                 <div key={banner.id} className="relative flex-[0_0_100%] min-w-0 h-full editorial-section">
                   <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
