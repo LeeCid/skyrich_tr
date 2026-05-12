@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Battery, BatteryInput } from "@workspace/api-client-react";
 
 export function AdminBatteries() {
@@ -30,8 +31,14 @@ export function AdminBatteries() {
     technology: "Lithium",
     dimensions: "",
     weight: undefined,
+    chargeCurrent: "",
     imageUrl: "",
     applications: "",
+    crossReferenceCodes: [],
+    sourceStatus: "",
+    sourceUrl: "",
+    sourceNotes: "",
+    vehicleHints: [],
     active: true,
     featured: false,
     sortOrder: 0
@@ -59,8 +66,14 @@ export function AdminBatteries() {
         technology: battery.technology,
         dimensions: battery.dimensions || "",
         weight: battery.weight || undefined,
+        chargeCurrent: (battery as any).chargeCurrent || "",
         imageUrl: battery.imageUrl || "",
         applications: battery.applications || "",
+        crossReferenceCodes: (battery as any).crossReferenceCodes || [],
+        sourceStatus: (battery as any).sourceStatus || "",
+        sourceUrl: (battery as any).sourceUrl || "",
+        sourceNotes: (battery as any).sourceNotes || "",
+        vehicleHints: (battery as any).vehicleHints || [],
         active: battery.active,
         featured: battery.featured,
         sortOrder: battery.sortOrder
@@ -78,8 +91,14 @@ export function AdminBatteries() {
         technology: "Lithium",
         dimensions: "",
         weight: undefined,
+        chargeCurrent: "",
         imageUrl: "",
         applications: "",
+        crossReferenceCodes: [],
+        sourceStatus: "",
+        sourceUrl: "",
+        sourceNotes: "",
+        vehicleHints: [],
         active: true,
         featured: false,
         sortOrder: 0
@@ -102,8 +121,42 @@ export function AdminBatteries() {
       toast({ title: "Hata", description: "Görsel URL geçersiz. Sadece / veya http/https ile başlayan adresler kullanın.", variant: "destructive" });
       return;
     }
+    if (formData.sourceUrl && !isValidUrl(formData.sourceUrl)) {
+      toast({ title: "Hata", description: "Kaynak URL geçersiz. Sadece http/https ile başlayan adresler kullanın.", variant: "destructive" });
+      return;
+    }
+    
+    // Parse crossReferenceCodes from comma/newline-separated text if stored as string
+    let crossRefCodes: string[] = [];
+    const crossRefInput = formData.crossReferenceCodes as any;
+    if (typeof crossRefInput === 'string') {
+      crossRefCodes = crossRefInput.split(/[\n,]+/).map((s: string) => s.trim()).filter((s: string) => s);
+    } else if (Array.isArray(crossRefInput)) {
+      crossRefCodes = crossRefInput;
+    }
+    
+    // Parse vehicleHints from JSON if stored as string
+    let vehicleHints: any[] = [];
+    const vehicleHintsInput = formData.vehicleHints as any;
+    if (typeof vehicleHintsInput === 'string') {
+      try {
+        vehicleHints = JSON.parse(vehicleHintsInput);
+      } catch (e) {
+        toast({ title: "Hata", description: "Araç ipuçları JSON formatı geçersiz.", variant: "destructive" });
+        return;
+      }
+    } else if (Array.isArray(vehicleHintsInput)) {
+      vehicleHints = vehicleHintsInput;
+    }
+
+    const submitData = {
+      ...formData,
+      crossReferenceCodes: crossRefCodes,
+      vehicleHints: vehicleHints
+    } as any;
+
     if (editingBattery) {
-      updateMutation.mutate({ id: editingBattery.id, data: formData }, {
+      updateMutation.mutate({ id: editingBattery.id, data: submitData }, {
         onSuccess: () => {
           toast({ title: "Başarılı", description: "Akü güncellendi." });
           queryClient.invalidateQueries({ queryKey: getListBatteriesQueryKey() });
@@ -114,7 +167,7 @@ export function AdminBatteries() {
         }
       });
     } else {
-      createMutation.mutate({ data: formData }, {
+      createMutation.mutate({ data: submitData }, {
         onSuccess: () => {
           toast({ title: "Başarılı", description: "Akü oluşturuldu." });
           queryClient.invalidateQueries({ queryKey: getListBatteriesQueryKey() });
@@ -208,55 +261,87 @@ export function AdminBatteries() {
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[800px] bg-card border-border rounded-none max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[900px] bg-card border-border rounded-none max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="uppercase font-bold tracking-wider">{editingBattery ? "Aküyü Düzenle" : "Yeni Akü Ekle"}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Model Kodu</Label>
-                <Input value={formData.modelCode} onChange={(e) => setFormData({...formData, modelCode: e.target.value})} className="rounded-none font-mono" />
+          
+          <Tabs defaultValue="basic" className="w-full">
+            <TabsList className="grid w-full grid-cols-5 mb-6">
+              <TabsTrigger value="basic">Temel Bilgiler</TabsTrigger>
+              <TabsTrigger value="technical">Teknik Özellikler</TabsTrigger>
+              <TabsTrigger value="codes">Karşılık Kodları</TabsTrigger>
+              <TabsTrigger value="source">Kaynak / Doğrulama</TabsTrigger>
+              <TabsTrigger value="vehicles">Araç İpuçları</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="basic" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Model Kodu</Label>
+                  <Input value={formData.modelCode} onChange={(e) => setFormData({...formData, modelCode: e.target.value})} className="rounded-none font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label>İsim</Label>
+                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="rounded-none" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Kategori</Label>
+                  <Select value={formData.type} onValueChange={(v) => setFormData({...formData, type: v})}>
+                    <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
+                    <SelectContent className="rounded-none">
+                      <SelectItem value="Motorcycle">Motosiklet</SelectItem>
+                      <SelectItem value="ATV">ATV</SelectItem>
+                      <SelectItem value="JetSki">Jet-Ski</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Teknoloji</Label>
+                  <Select value={formData.technology || "Lithium"} onValueChange={(v) => setFormData({...formData, technology: v})}>
+                    <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
+                    <SelectContent className="rounded-none">
+                      <SelectItem value="Lithium">Lityum</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Görsel URL</Label>
+                  <Input value={formData.imageUrl || ""} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} className="rounded-none" placeholder="/images/battery-lithium.png" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Sıralama (Küçük olan önce)</Label>
+                  <Input type="number" value={formData.sortOrder || 0} onChange={(e) => setFormData({...formData, sortOrder: parseInt(e.target.value)})} className="rounded-none font-mono" />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>İsim</Label>
-                <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="rounded-none" />
-              </div>
-              <div className="space-y-2">
-                <Label>Kategori</Label>
-                <Select value={formData.type} onValueChange={(v) => setFormData({...formData, type: v})}>
-                  <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
-                  <SelectContent className="rounded-none">
-                    <SelectItem value="Motorcycle">Motosiklet</SelectItem>
-                    <SelectItem value="ATV">ATV</SelectItem>
-                    <SelectItem value="JetSki">Jet-Ski</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Teknoloji</Label>
-                <Select value={formData.technology || "Lithium"} onValueChange={(v) => setFormData({...formData, technology: v})}>
-                  <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
-                  <SelectContent className="rounded-none">
-                    <SelectItem value="Lithium">Lityum</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Teknik değerler resmi kaynak veya işletme tarafından doğrulanmadan doldurulmamalıdır.
-                </p>
-              </div>
+              
               <div className="space-y-2">
                 <Label>Açıklama</Label>
                 <Textarea value={formData.description || ""} onChange={(e) => setFormData({...formData, description: e.target.value})} className="rounded-none min-h-[100px]" />
               </div>
+
               <div className="space-y-2">
-                <Label>Görsel URL</Label>
-                <Input value={formData.imageUrl || ""} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} className="rounded-none" placeholder="/images/battery-lithium.png" />
+                <Label>Uyumlu Araçlar</Label>
+                <Textarea value={formData.applications || ""} onChange={(e) => setFormData({...formData, applications: e.target.value})} className="rounded-none min-h-[80px] font-mono text-sm" />
               </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+
+              <div className="flex gap-6 pt-4 border-t border-border">
+                <div className="flex items-center space-x-2">
+                  <Switch id="active" checked={formData.active} onCheckedChange={(c) => setFormData({...formData, active: c})} />
+                  <Label htmlFor="active" className="cursor-pointer">Aktif</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="featured" checked={formData.featured} onCheckedChange={(c) => setFormData({...formData, featured: c})} />
+                  <Label htmlFor="featured" className="cursor-pointer">Öne Çıkan</Label>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="technical" className="space-y-4">
+              <p className="text-sm text-muted-foreground mb-4">
+                Teknik değerler resmi kaynak veya işletme tarafından doğrulanmadan doldurulmamalıdır.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Voltaj (V)</Label>
                   <Input type="number" value={formData.voltage || ""} onChange={(e) => setFormData({...formData, voltage: parseFloat(e.target.value)})} className="rounded-none font-mono" />
@@ -273,35 +358,87 @@ export function AdminBatteries() {
                   <Label>Ağırlık (kg)</Label>
                   <Input type="number" step="0.1" value={formData.weight || ""} onChange={(e) => setFormData({...formData, weight: parseFloat(e.target.value)})} className="rounded-none font-mono" />
                 </div>
+                <div className="space-y-2">
+                  <Label>Şarj Akımı</Label>
+                  <Input value={formData.chargeCurrent || ""} onChange={(e) => setFormData({...formData, chargeCurrent: e.target.value})} className="rounded-none font-mono" placeholder="Örn: 2A—15A" />
+                </div>
               </div>
               
               <div className="space-y-2">
                 <Label>Boyutlar (UxGxD mm)</Label>
-                <Input value={formData.dimensions || ""} onChange={(e) => setFormData({...formData, dimensions: e.target.value})} className="rounded-none font-mono" />
+                <Input value={formData.dimensions || ""} onChange={(e) => setFormData({...formData, dimensions: e.target.value})} className="rounded-none font-mono" placeholder="Örn: 150*87*93 mm" />
               </div>
-              
+            </TabsContent>
+
+            <TabsContent value="codes" className="space-y-4">
               <div className="space-y-2">
-                <Label>Uyumlu Araçlar</Label>
-                <Textarea value={formData.applications || ""} onChange={(e) => setFormData({...formData, applications: e.target.value})} className="rounded-none min-h-[80px] font-mono text-sm" />
+                <Label>Karşılık Kodları (Virgül veya yeni satır ile ayırın)</Label>
+                <Textarea 
+                  value={Array.isArray(formData.crossReferenceCodes) ? (formData.crossReferenceCodes as any).join('\n') : (formData.crossReferenceCodes as any) || ""} 
+                  onChange={(e) => setFormData({...formData, crossReferenceCodes: e.target.value as any})} 
+                  className="rounded-none min-h-[150px] font-mono text-sm" 
+                  placeholder="YTX7A-BS&#10;YTX9-BS&#10;YTR9-BS" 
+                />
+                <p className="text-xs text-muted-foreground">
+                  Her satıra bir kod veya virgül ile ayırarak birden fazla kod girin.
+                </p>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="source" className="space-y-4">
+              <div className="space-y-2">
+                <Label>Kaynak Durumu</Label>
+                <Select value={formData.sourceStatus || ""} onValueChange={(v) => setFormData({...formData, sourceStatus: v})}>
+                  <SelectTrigger className="rounded-none"><SelectValue placeholder="Seçin..." /></SelectTrigger>
+                  <SelectContent className="rounded-none">
+                    <SelectItem value="official_high">Resmi Kaynak (Yüksek Güven)</SelectItem>
+                    <SelectItem value="official_conflict">Resmi Kaynak Varyantı (Çakışma)</SelectItem>
+                    <SelectItem value="official_partial">Kısmi Resmi Kaynak</SelectItem>
+                    <SelectItem value="official_family_conflict">Aile Kaynağı / Doğrulama Gerekli</SelectItem>
+                    <SelectItem value="official_partial_secondary_specs">Kısmi Resmi + İkincil</SelectItem>
+                    <SelectItem value="secondary_verified_manual_review">İkincil Kaynak / Manuel Doğrulama</SelectItem>
+                    <SelectItem value="missing">Kaynak Yok</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
-                <Label>Sıralama (Küçük olan önce)</Label>
-                <Input type="number" value={formData.sortOrder || 0} onChange={(e) => setFormData({...formData, sortOrder: parseInt(e.target.value)})} className="rounded-none font-mono" />
+                <Label>Kaynak URL</Label>
+                <Input value={formData.sourceUrl || ""} onChange={(e) => setFormData({...formData, sourceUrl: e.target.value})} className="rounded-none" placeholder="https://..." />
               </div>
 
-              <div className="flex gap-6 pt-4 border-t border-border">
-                <div className="flex items-center space-x-2">
-                  <Switch id="active" checked={formData.active} onCheckedChange={(c) => setFormData({...formData, active: c})} />
-                  <Label htmlFor="active" className="cursor-pointer">Aktif</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch id="featured" checked={formData.featured} onCheckedChange={(c) => setFormData({...formData, featured: c})} />
-                  <Label htmlFor="featured" className="cursor-pointer">Öne Çıkan</Label>
-                </div>
+              <div className="space-y-2">
+                <Label>Kaynak Notları</Label>
+                <Textarea value={formData.sourceNotes || ""} onChange={(e) => setFormData({...formData, sourceNotes: e.target.value})} className="rounded-none min-h-[100px]" placeholder="Kaynak açıklaması, çakışma notları, vb." />
               </div>
-            </div>
-          </div>
+            </TabsContent>
+
+            <TabsContent value="vehicles" className="space-y-4">
+              <div className="space-y-2">
+                <Label>Araç İpuçları (JSON formatında)</Label>
+                <Textarea 
+                  value={Array.isArray(formData.vehicleHints) ? JSON.stringify(formData.vehicleHints, null, 2) : (formData.vehicleHints as any) || ""} 
+                  onChange={(e) => setFormData({...formData, vehicleHints: e.target.value as any})} 
+                  className="rounded-none min-h-[200px] font-mono text-xs" 
+                  placeholder={`[
+  {
+    "make": "Honda",
+    "model": "Africa Twin",
+    "yearFrom": 2018,
+    "yearTo": null,
+    "engine": null,
+    "note": null,
+    "confidence": "medium",
+    "sourceUrl": null
+  }
+]`} 
+                />
+                <p className="text-xs text-muted-foreground">
+                  Araç uyumluluk ipuçları JSON formatında girin. Bu alan kaynaklı aday eşleşmeler için kullanılır.
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
           
           <div className="flex justify-end gap-4 pt-4 border-t border-border">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="rounded-none">İptal</Button>

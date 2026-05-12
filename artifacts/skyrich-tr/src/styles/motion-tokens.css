@@ -1,0 +1,31 @@
+/**
+ * Motion Design Tokens
+ * Premium, subtle motion system respecting prefers-reduced-motion
+ */
+
+:root {
+  /* Duration Tokens (ms) */
+  --motion-duration-instant: 150ms;
+  --motion-duration-fast: 250ms;
+  --motion-duration-normal: 400ms;
+  --motion-duration-slow: 600ms;
+  --motion-duration-slower: 800ms;
+
+  /* Easing Tokens */
+  --motion-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --motion-ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --motion-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --motion-ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --motion-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prefers-reduced-motion override */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-instant: 0ms;
+    --motion-duration-fast: 0ms;
+    --motion-duration-normal: 0ms;
+    --motion-duration-slow: 0ms;
+    --motion-duration-slower: 0ms;
+  }
+}

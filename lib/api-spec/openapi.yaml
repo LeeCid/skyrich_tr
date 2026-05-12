@@ -579,10 +579,43 @@ components:
           type: ["string", "null"]
         weight:
           type: ["number", "null"]
+        chargeCurrent:
+          type: ["string", "null"]
         imageUrl:
           type: ["string", "null"]
         applications:
           type: ["string", "null"]
+        crossReferenceCodes:
+          type: ["array", "null"]
+          items:
+            type: string
+        sourceStatus:
+          type: ["string", "null"]
+        sourceUrl:
+          type: ["string", "null"]
+        sourceNotes:
+          type: ["string", "null"]
+        vehicleHints:
+          type: ["array", "null"]
+          items:
+            type: object
+            properties:
+              make:
+                type: ["string", "null"]
+              model:
+                type: ["string", "null"]
+              yearFrom:
+                type: ["integer", "null"]
+              yearTo:
+                type: ["integer", "null"]
+              engine:
+                type: ["string", "null"]
+              note:
+                type: ["string", "null"]
+              confidence:
+                type: ["string", "null"]
+              sourceUrl:
+                type: ["string", "null"]
         active:
           type: boolean
         featured:
@@ -616,10 +649,43 @@ components:
           type: string
         weight:
           type: number
+        chargeCurrent:
+          type: string
         imageUrl:
           type: string
         applications:
           type: string
+        crossReferenceCodes:
+          type: array
+          items:
+            type: string
+        sourceStatus:
+          type: string
+        sourceUrl:
+          type: string
+        sourceNotes:
+          type: string
+        vehicleHints:
+          type: array
+          items:
+            type: object
+            properties:
+              make:
+                type: string
+              model:
+                type: string
+              yearFrom:
+                type: integer
+              yearTo:
+                type: integer
+              engine:
+                type: string
+              note:
+                type: string
+              confidence:
+                type: string
+              sourceUrl:
+                type: string
         active:
           type: boolean
         featured:
@@ -650,10 +716,43 @@ components:
           type: string
         weight:
           type: number
+        chargeCurrent:
+          type: string
         imageUrl:
           type: string
         applications:
           type: string
+        crossReferenceCodes:
+          type: array
+          items:
+            type: string
+        sourceStatus:
+          type: string
+        sourceUrl:
+          type: string
+        sourceNotes:
+          type: string
+        vehicleHints:
+          type: array
+          items:
+            type: object
+            properties:
+              make:
+                type: string
+              model:
+                type: string
+              yearFrom:
+                type: integer
+              yearTo:
+                type: integer
+              engine:
+                type: string
+              note:
+                type: string
+              confidence:
+                type: string
+              sourceUrl:
+                type: string
         active:
           type: boolean
         featured:

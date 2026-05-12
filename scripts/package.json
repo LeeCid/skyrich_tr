@@ -7,13 +7,16 @@
     "hello": "tsx ./src/hello.ts",
     "seed:products": "tsx ./src/seed-products.ts",
     "verify:assets": "tsx ./src/verify-assets.ts",
+    "map:product-images": "tsx ./src/map-product-images.ts",
+    "normalize-product-images": "tsx ./src/normalize-product-images.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@workspace/db": "workspace:*",
     "dotenv": "^16.4.7",
     "drizzle-orm": "catalog:",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/node": "catalog:",

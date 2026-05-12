@@ -1,0 +1,25 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" rx="40" fill="#020303"/>
+  <rect width="180" height="180" rx="40" fill="url(#bg)"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020303"/>
+      <stop offset="0.45" stop-color="#070908"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="whiteMetal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#f6f6f6"/>
+      <stop offset="1" stop-color="#cfcfcf"/>
+    </linearGradient>
+    <linearGradient id="blueBolt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#18c8ff"/>
+      <stop offset="0.5" stop-color="#008ee8"/>
+      <stop offset="1" stop-color="#0056a8"/>
+    </linearGradient>
+  </defs>
+  <!-- Skyrich text with lightning bolt -->
+  <text x="24" y="108" fill="url(#whiteMetal)" font-family="Arial Black, Impact, sans-serif" font-size="56" font-weight="900" letter-spacing="-2">Sk</text>
+  <polygon points="74,76 94,76 84,90 104,90 64,114 76,98 56,98" fill="url(#blueBolt)"/>
+  <text x="88" y="108" fill="url(#whiteMetal)" font-family="Arial Black, Impact, sans-serif" font-size="56" font-weight="900" letter-spacing="-2">rich</text>
+</svg>

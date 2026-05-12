@@ -44,4 +44,4 @@ pnpm run typecheck
 pnpm run build
 ```
 
-See `replit.md` for additional run commands.
+For detailed deployment instructions, see `DEPLOYMENT_CHECKLIST.md`.

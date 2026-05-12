@@ -1,4 +1,4 @@
-import { pgTable, serial, text, boolean, integer, real, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, boolean, integer, real, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -14,8 +14,14 @@ export const batteriesTable = pgTable("batteries", {
   technology: text("technology").notNull().default("Lithium"),
   dimensions: text("dimensions"),
   weight: real("weight"),
+  chargeCurrent: text("charge_current"),
   imageUrl: text("image_url"),
   applications: text("applications"),
+  crossReferenceCodes: jsonb("cross_reference_codes").$type<string[]>(),
+  sourceStatus: text("source_status"),
+  sourceUrl: text("source_url"),
+  sourceNotes: text("source_notes"),
+  vehicleHints: jsonb("vehicle_hints").$type<any[]>(),
   active: boolean("active").notNull().default(true),
   featured: boolean("featured").notNull().default(false),
   sortOrder: integer("sort_order").notNull().default(0),

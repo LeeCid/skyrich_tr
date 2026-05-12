@@ -5,6 +5,7 @@
  * Skyrich Battery TR API
  * OpenAPI spec version: 0.1.0
  */
+import type { BatteryVehicleHintsItem } from "./batteryVehicleHintsItem";
 
 export interface Battery {
   id: number;
@@ -25,9 +26,21 @@ export interface Battery {
   /** @nullable */
   weight?: number | null;
   /** @nullable */
+  chargeCurrent?: string | null;
+  /** @nullable */
   imageUrl?: string | null;
   /** @nullable */
   applications?: string | null;
+  /** @nullable */
+  crossReferenceCodes?: string[] | null;
+  /** @nullable */
+  sourceStatus?: string | null;
+  /** @nullable */
+  sourceUrl?: string | null;
+  /** @nullable */
+  sourceNotes?: string | null;
+  /** @nullable */
+  vehicleHints?: BatteryVehicleHintsItem[] | null;
   active: boolean;
   featured: boolean;
   sortOrder: number;

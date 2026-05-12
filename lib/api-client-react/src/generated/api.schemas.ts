@@ -9,6 +9,25 @@ export interface HealthStatus {
   status: string;
 }
 
+export type BatteryVehicleHintsItem = {
+  /** @nullable */
+  make?: string | null;
+  /** @nullable */
+  model?: string | null;
+  /** @nullable */
+  yearFrom?: number | null;
+  /** @nullable */
+  yearTo?: number | null;
+  /** @nullable */
+  engine?: string | null;
+  /** @nullable */
+  note?: string | null;
+  /** @nullable */
+  confidence?: string | null;
+  /** @nullable */
+  sourceUrl?: string | null;
+};
+
 export interface Battery {
   id: number;
   modelCode: string;
@@ -28,14 +47,37 @@ export interface Battery {
   /** @nullable */
   weight?: number | null;
   /** @nullable */
+  chargeCurrent?: string | null;
+  /** @nullable */
   imageUrl?: string | null;
   /** @nullable */
   applications?: string | null;
+  /** @nullable */
+  crossReferenceCodes?: string[] | null;
+  /** @nullable */
+  sourceStatus?: string | null;
+  /** @nullable */
+  sourceUrl?: string | null;
+  /** @nullable */
+  sourceNotes?: string | null;
+  /** @nullable */
+  vehicleHints?: BatteryVehicleHintsItem[] | null;
   active: boolean;
   featured: boolean;
   sortOrder: number;
   createdAt: string;
 }
+
+export type BatteryInputVehicleHintsItem = {
+  make?: string;
+  model?: string;
+  yearFrom?: number;
+  yearTo?: number;
+  engine?: string;
+  note?: string;
+  confidence?: string;
+  sourceUrl?: string;
+};
 
 export interface BatteryInput {
   modelCode: string;
@@ -48,12 +90,29 @@ export interface BatteryInput {
   technology: string;
   dimensions?: string;
   weight?: number;
+  chargeCurrent?: string;
   imageUrl?: string;
   applications?: string;
+  crossReferenceCodes?: string[];
+  sourceStatus?: string;
+  sourceUrl?: string;
+  sourceNotes?: string;
+  vehicleHints?: BatteryInputVehicleHintsItem[];
   active?: boolean;
   featured?: boolean;
   sortOrder?: number;
 }
+
+export type BatteryUpdateVehicleHintsItem = {
+  make?: string;
+  model?: string;
+  yearFrom?: number;
+  yearTo?: number;
+  engine?: string;
+  note?: string;
+  confidence?: string;
+  sourceUrl?: string;
+};
 
 export interface BatteryUpdate {
   modelCode?: string;
@@ -66,8 +125,14 @@ export interface BatteryUpdate {
   technology?: string;
   dimensions?: string;
   weight?: number;
+  chargeCurrent?: string;
   imageUrl?: string;
   applications?: string;
+  crossReferenceCodes?: string[];
+  sourceStatus?: string;
+  sourceUrl?: string;
+  sourceNotes?: string;
+  vehicleHints?: BatteryUpdateVehicleHintsItem[];
   active?: boolean;
   featured?: boolean;
   sortOrder?: number;

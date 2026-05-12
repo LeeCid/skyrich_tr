@@ -57,6 +57,40 @@ router.get("/finder/models", async (req, res) => {
   }
 });
 
+router.get("/finder/search-code", async (req, res) => {
+  try {
+    const { code } = req.query as { code?: string };
+    if (!code) {
+      res.status(400).json({ error: "code parameter required" });
+      return;
+    }
+
+    const normalizedCode = code.toUpperCase().trim();
+    
+    const batteries = await db
+      .select()
+      .from(batteriesTable)
+      .where(eq(batteriesTable.active, true));
+
+    const results = batteries
+      .filter(b => isPublicApproved(b))
+      .filter(b => {
+        if (!b.crossReferenceCodes || !Array.isArray(b.crossReferenceCodes)) {
+          return false;
+        }
+        return b.crossReferenceCodes.some((refCode: string) => 
+          refCode.toUpperCase() === normalizedCode
+        );
+      })
+      .map(b => ({ battery: b }));
+
+    res.json(results);
+  } catch (err) {
+    req.log.error({ err }, "Failed to search by battery code");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/finder/search", async (req, res) => {
   try {
     const { make, model, year } = req.query as { make?: string; model?: string; year?: string };

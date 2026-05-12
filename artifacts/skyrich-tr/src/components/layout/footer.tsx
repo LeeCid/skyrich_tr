@@ -1,69 +1,117 @@
 import { Link } from "wouter";
 import { useGetSiteSettings, getGetSiteSettingsQueryKey, useGetPageContent, getGetPageContentQueryKey } from "@workspace/api-client-react";
+import { Logo } from "@/components/brand/logo";
 
 export function Footer() {
   const { data: settings } = useGetSiteSettings({ query: { queryKey: getGetSiteSettingsQueryKey() } });
   const { data: footerContent } = useGetPageContent("footer-description", { query: { queryKey: getGetPageContentQueryKey("footer-description") } });
 
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tighter text-primary">SKYRICH</span>
-              <span className="text-sm font-semibold tracking-widest text-muted-foreground">POWER</span>
+    <footer className="border-t border-border/50 bg-tonal-panel relative overflow-hidden">
+      {/* Top gradient accent */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      
+      <div className="premium-container py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand Column */}
+          <div className="space-y-8 lg:col-span-1">
+            <Link href="/" className="inline-flex items-center group">
+              <Logo variant="footer" className="h-10 max-w-[200px] md:h-12 md:max-w-[240px] transition-transform duration-300 group-hover:scale-105" alt="Skyrich Battery Türkiye" />
             </Link>
-            {footerContent?.content && (
-              <p className="text-sm text-muted-foreground">
-                {footerContent.content}
-              </p>
-            )}
-            <div className="flex gap-4 pt-2 text-muted-foreground">
-              {settings?.instagram && (
-                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+            <p className="text-sm text-text-secondary leading-relaxed">
+              {footerContent?.content || "Skyrich Battery Türkiye, lityum akü modelleri için katalog ve teknik destek odaklı resmi distribütör web sitesidir."}
+            </p>
+            {settings?.instagram && (
+              <div className="pt-2">
+                <a 
+                  href={settings.instagram} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-sm text-text-secondary hover:text-primary transition-colors font-medium"
+                >
                   Instagram
                 </a>
-              )}
-              {settings?.facebook && (
-                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                  Facebook
-                </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-          
+
+          {/* Quick Links - Catalog */}
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Hızlı Linkler</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/urunler" className="hover:text-primary transition-colors">Tüm Ürünler</Link></li>
-              <li><Link href="/hakkimizda" className="hover:text-primary transition-colors">Hakkımızda</Link></li>
-              <li><Link href="/iletisim" className="hover:text-primary transition-colors">İletişim</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold mb-4 text-foreground">Kategoriler</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/urunler?category=Lithium" className="hover:text-primary transition-colors">Lityum Aküler</Link></li>
+            <h3 className="font-bold uppercase tracking-wider text-sm mb-6 text-text-muted">Katalog</h3>
+            <ul className="space-y-4">
+              <li>
+                <Link href="/urunler" className="text-sm text-text-secondary hover:text-primary transition-colors">
+                  Tüm Ürünler
+                </Link>
+              </li>
+              <li>
+                <Link href="/aku-bulucu" className="text-sm text-text-secondary hover:text-primary transition-colors">
+                  Akü Bulucu
+                </Link>
+              </li>
             </ul>
           </div>
 
+          {/* Quick Links - Corporate */}
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">İletişim</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {settings?.email && <li>{settings.email}</li>}
-              {settings?.phone && <li>{settings.phone}</li>}
-              {settings?.whatsapp && <li>Whatsapp: {settings.whatsapp}</li>}
-              {settings?.address && <li>{settings.address}</li>}
+            <h3 className="font-bold uppercase tracking-wider text-sm mb-6 text-text-muted">Kurumsal</h3>
+            <ul className="space-y-4">
+              <li>
+                <Link href="/hakkimizda" className="text-sm text-text-secondary hover:text-primary transition-colors">
+                  Hakkımızda
+                </Link>
+              </li>
+              <li>
+                <Link href="/iletisim" className="text-sm text-text-secondary hover:text-primary transition-colors">
+                  İletişim
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="font-bold uppercase tracking-wider text-sm mb-6 text-text-muted">İletişim</h3>
+            <ul className="space-y-4 text-sm text-text-secondary">
+              {settings?.phone && (
+                <li className="font-mono hover:text-primary transition-colors">
+                  <a href={`tel:${settings.phone.replace(/\D/g, '')}`}>
+                    {settings.phone}
+                  </a>
+                </li>
+              )}
+              {settings?.email && (
+                <li className="font-mono hover:text-primary transition-colors break-all">
+                  <a href={`mailto:${settings.email}`}>
+                    {settings.email}
+                  </a>
+                </li>
+              )}
+              {settings?.address && (
+                <li className="whitespace-pre-wrap">{settings.address}</li>
+              )}
+              {!settings?.phone && !settings?.email && !settings?.address && (
+                <li className="text-text-muted italic">
+                  İletişim bilgileri admin panelinden eklendiğinde burada görüntülenecek.
+                </li>
+              )}
             </ul>
           </div>
         </div>
-        
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Skyrich Battery Türkiye. Tüm hakları saklıdır.
+
+        {/* Bottom Bar */}
+        <div className="border-t border-border/50 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-sm text-text-muted">
+            {new Date().getFullYear()} Skyrich Battery Türkiye. Tüm hakları saklıdır.
           </p>
+          <div className="flex gap-8 text-sm text-text-muted">
+            <Link href="/hakkimizda" className="hover:text-primary transition-colors">
+              Hakkımızda
+            </Link>
+            <Link href="/iletisim" className="hover:text-primary transition-colors">
+              İletişim
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

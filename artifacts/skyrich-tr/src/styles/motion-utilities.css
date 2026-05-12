@@ -1,0 +1,201 @@
+/**
+ * Motion Design Utilities
+ * Reusable motion classes for premium, subtle animations
+ */
+
+/* Reveal Animations */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-down {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-left {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes reveal-right {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Hover Lift */
+@keyframes hover-lift {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Sheen Effect */
+@keyframes sheen {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+/* Line Draw */
+@keyframes line-draw {
+  from {
+    stroke-dashoffset: 100%;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Utility Classes */
+.reveal-up {
+  animation: reveal-up var(--motion-duration-normal) var(--motion-ease-out) forwards;
+  opacity: 0;
+}
+
+.reveal-down {
+  animation: reveal-down var(--motion-duration-normal) var(--motion-ease-out) forwards;
+  opacity: 0;
+}
+
+.reveal-left {
+  animation: reveal-left var(--motion-duration-normal) var(--motion-ease-out) forwards;
+  opacity: 0;
+}
+
+.reveal-right {
+  animation: reveal-right var(--motion-duration-normal) var(--motion-ease-out) forwards;
+  opacity: 0;
+}
+
+.reveal-fade {
+  animation: reveal-fade var(--motion-duration-normal) var(--motion-ease-out) forwards;
+  opacity: 0;
+}
+
+.reveal-scale {
+  animation: reveal-scale var(--motion-duration-normal) var(--motion-ease-out) forwards;
+  opacity: 0;
+}
+
+/* Delay Variants */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+
+/* Hover Lift Effect */
+.hover-lift {
+  transition: transform var(--motion-duration-fast) var(--motion-ease-out), 
+              box-shadow var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Sheen Effect Container */
+.sheen-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shean-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+}
+
+.shean-container:hover::after {
+  animation: sheen var(--motion-duration-slower) var(--motion-ease-smooth);
+}
+
+/* Prefers-reduced-motion: Disable animations */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-down,
+  .reveal-left,
+  .reveal-right,
+  .reveal-fade,
+  .reveal-scale {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .hover-lift {
+    transition: none;
+  }
+  
+  .hover-lift:hover {
+    transform: none;
+  }
+  
+  .shean-container:hover::after {
+    animation: none;
+  }
+}
