@@ -42,22 +42,32 @@ console.log(`Seed mode: ${FORCE_MODE ? "FORCE (overwrite all seeded fields)" : "
 console.log(`Text fix mode: ${FIX_TEXT_MODE ? "ENABLED" : "DISABLED"}`);
 console.log();
 
-// Text fix function for Turkish mojibake
-function fixMojibake(text: string | null | undefined): string | undefined {
-  if (!text) return undefined;
-  let fixed = text;
-  // Common mojibake patterns
-  fixed = fixed.replace(/iin/g, "için");
-  fixed = fixed.replace(/ak/g, "akü");
-  fixed = fixed.replace(/ara/g, "araç");
-  fixed = fixed.replace(/rn/g, "ürün");
-  fixed = fixed.replace(/zm/g, "çözüm");
-  fixed = fixed.replace(/distribtr/g, "distribütör");
-  fixed = fixed.replace(/destegiyle/g, "desteğiyle");
-  fixed = fixed.replace(/ret/g, "üret");
-  fixed = fixed.replace(/zellik/g, "özellik");
-  fixed = fixed.replace(/ner/g, "üzer");
-  return fixed;
+// Corruption guard - fail if corrupted substrings are detected
+function checkForCorruption(text: string): void {
+  const corruptedPatterns = [
+    "aküü",
+    "kaynakü",
+    "kaynakül",
+    "araçç",
+    "öü",
+    "olaraçkü",
+    "kompaküt",
+    "aküımı",
+    "almaküt",
+    "almakütadır",
+    "sınıfındaküi",
+    "öözellikle",
+  ];
+
+  for (const pattern of corruptedPatterns) {
+    if (text.includes(pattern)) {
+      throw new Error(
+        `Corruption detected in text: found "${pattern}". ` +
+        `Text fix function is corrupting Turkish text. ` +
+        `Fix the fixMojibake function or use clean UTF-8 text directly.`
+      );
+    }
+  }
 }
 
 const APPROVED_SKUS = [
@@ -132,7 +142,7 @@ const APPROVED_SKUS = [
     technology: "Lithium",
     imageUrl: "/images/products/HJTZ14S-FPZ.png",
     sortOrder: 4,
-    featured: true,
+    featured: false,
     crossReferenceCodes: ["YTZ14S", "YTZ14S-BS"],
     voltage: 12,
     capacity: null,
@@ -303,7 +313,7 @@ const APPROVED_SKUS = [
     description: "HJT7B-FPZ, Skyrich'in Ducati/OEM bağlamında HJT7B-FPZ-SC adıyla da görülen FPZ sınıfı lityum akü ailesindendir. YT7BZ-BS / YT7B-BS karşılık kodları üzerinden değerlendirilir; Ducati Panigale sınıfı uygulamalarda kaynaklı aday eşleşme olarak gösterilmeli ve nihai uyumluluk teknik destekle doğrulanmalıdır.",
     type: "Motorcycle",
     technology: "Lithium",
-    imageUrl: "/images/products/10.png",
+    imageUrl: "/images/products/HJT7B-FPZ.png",
     sortOrder: 12,
     featured: false,
     crossReferenceCodes: ["YT7BZ-BS", "YT7B-BS"],
@@ -338,15 +348,13 @@ async function main() {
   let created = 0;
   let updated = 0;
   let skipped = 0;
-  let textFixed = 0;
 
   for (const sku of APPROVED_SKUS) {
-    // Apply text fixes only to nullable fields (description)
-    const description = FIX_TEXT_MODE ? fixMojibake(sku.description) : sku.description;
+    // Use clean UTF-8 text directly - no unsafe text replacement
+    const description = sku.description;
     
-    if (FIX_TEXT_MODE && description !== sku.description) {
-      textFixed++;
-    }
+    // Check for corruption in source data
+    checkForCorruption(description);
 
     const existing = await db
       .select()
@@ -409,7 +417,7 @@ async function main() {
           })
           .where(eq(batteriesTable.modelCode, sku.modelCode));
         updated++;
-        console.log(`  Updated: ${sku.modelCode}${FIX_TEXT_MODE && description !== sku.description ? " (text fixed)" : ""}`);
+        console.log(`  Updated: ${sku.modelCode}`);
       } else {
         skipped++;
         console.log(`  Skipped (no change): ${sku.modelCode}`);
@@ -446,9 +454,6 @@ async function main() {
   console.log(`  Created: ${created}`);
   console.log(`  Updated: ${updated}`);
   console.log(`  Skipped: ${skipped}`);
-  if (FIX_TEXT_MODE && textFixed > 0) {
-    console.log(`  Text Fixed: ${textFixed}`);
-  }
 
   await pool.end();
 }
