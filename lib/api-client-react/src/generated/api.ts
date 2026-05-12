@@ -153,10 +153,25 @@ export const listBatteries = async (
   params?: ListBatteriesParams,
   options?: RequestInit,
 ): Promise<Battery[]> => {
-  return customFetch<Battery[]>(getListBatteriesUrl(params), {
+  const response = await customFetch<unknown>(getListBatteriesUrl(params), {
     ...options,
     method: "GET",
   });
+  
+  // Normalize response to handle various API response shapes
+  if (Array.isArray(response)) return response as Battery[];
+  
+  if (response && typeof response === "object") {
+    const obj = response as Record<string, unknown>;
+    if (Array.isArray(obj.value)) return obj.value as Battery[];
+    if (Array.isArray(obj.data)) return obj.data as Battery[];
+    if (Array.isArray(obj.items)) return obj.items as Battery[];
+    if (Array.isArray(obj.results)) return obj.results as Battery[];
+    if (Array.isArray(obj.batteries)) return obj.batteries as Battery[];
+    if (Array.isArray(obj.products)) return obj.products as Battery[];
+  }
+  
+  return [];
 };
 
 export const getListBatteriesQueryKey = (params?: ListBatteriesParams) => {

@@ -25,7 +25,10 @@ export default function Products() {
     query: { queryKey: getListBatteriesQueryKey(queryParams) } 
   });
 
-  const filteredBatteries = batteries?.filter(b => 
+  // Ensure batteries is an array
+  const batteryList = Array.isArray(batteries) ? batteries : [];
+
+  const filteredBatteries = batteryList.filter(b => 
     b.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     b.modelCode.toLowerCase().includes(searchTerm.toLowerCase())
   );

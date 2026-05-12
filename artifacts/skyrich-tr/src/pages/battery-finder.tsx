@@ -36,8 +36,11 @@ export default function BatteryFinder() {
     { query: { enabled: false } }
   );
 
+  // Ensure batteries is an array
+  const batteryList = Array.isArray(batteries) ? batteries : [];
+
   // Filter batteries with vehicle hints matching the search
-  const vehicleHintsResults = batteries?.filter((b: any) => 
+  const vehicleHintsResults = batteryList.filter((b: any) => 
     (b as any).vehicleHints && (b as any).vehicleHints.length > 0 &&
     (b as any).vehicleHints.some((hint: any) => 
       (!make || hint.make?.toLowerCase() === make.toLowerCase()) &&

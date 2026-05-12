@@ -21,8 +21,11 @@ export default function Home() {
   const { data: popups } = useListPopups({ active: true }, { query: { queryKey: getListPopupsQueryKey({ active: true }) } });
   const { data: hero } = useGetHeroSettings({ query: { queryKey: getGetHeroSettingsQueryKey() } });
 
+  // Ensure featuredBatteries is an array
+  const batteryList = Array.isArray(featuredBatteries) ? featuredBatteries : [];
+
   // Filter featured batteries to only include clean, high-confidence SKUs
-  const safeFeaturedBatteries = featuredBatteries?.filter(b => 
+  const safeFeaturedBatteries = batteryList.filter(b => 
     b.active && b.featured && hasVerifiedImage(b.modelCode) &&
     ['HJTX9-FP', 'HJTX14H-FP', 'HJ51913-FP', 'HJT9B-FP', 'HJTZ14S-FP'].includes(b.modelCode)
   ) || [];
